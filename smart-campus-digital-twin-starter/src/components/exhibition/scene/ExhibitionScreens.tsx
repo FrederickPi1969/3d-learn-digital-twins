@@ -1,5 +1,4 @@
 import { Html, RoundedBox, Text } from '@react-three/drei'
-import { createPortal } from 'react-dom'
 import {
   GalleryHorizontal,
   Globe2,
@@ -9,7 +8,6 @@ import {
   ScanLine,
 } from 'lucide-react'
 import { ExhibitionFloorPlan } from '@/components/exhibition/ui/ExhibitionFloorPlan'
-import { VirtualDesktop } from '@/components/exhibition/os/VirtualOSDesktop'
 import { useExhibitionStore } from '@/store/useExhibitionStore'
 
 const WALL_SCREEN_PIXEL_WIDTH = 1366
@@ -98,20 +96,6 @@ function UnifiedWallSurface() {
   return <div className="embedded-wall-screen-surface"><WallNavigationDashboard /></div>
 }
 
-function VisitorSystemFocusLayer() {
-  const osOpen = useExhibitionStore((state) => state.osOpen)
-  const initialApp = useExhibitionStore((state) => state.osInitialApp)
-  const sessionNonce = useExhibitionStore((state) => state.osSessionNonce)
-  if (!osOpen) return null
-
-  return createPortal(
-    <div className="virtual-os-focus-layer">
-      <VirtualDesktop key={sessionNonce} initialApp={initialApp} />
-    </div>,
-    document.body,
-  )
-}
-
 /**
  * A single architectural wall display hosts both the floor-map dashboard and
  * the complete visitor operating system. There is deliberately no detached
@@ -183,5 +167,5 @@ function UnifiedWallTerminal() {
 }
 
 export function ExhibitionScreens() {
-  return <><UnifiedWallTerminal /><VisitorSystemFocusLayer /></>
+  return <UnifiedWallTerminal />
 }
