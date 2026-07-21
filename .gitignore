@@ -1,0 +1,14 @@
+# Local dependencies and generated output
+**/node_modules/
+**/dist/
+**/coverage/
+.DS_Store
+*.local
+
+# Download archives are reproducible source material; the selected runtime assets remain tracked.
+warehouse-sorting-digital-twin/assets/source/*.zip
+
+# Never publish local credentials.
+.env
+.env.*
+!.env.example

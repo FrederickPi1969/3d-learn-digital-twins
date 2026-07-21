@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark" />
+    <title>FLOWGRID · 仓储分拣数字孪生</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <script type="importmap">
+      { "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
+      } }
+    </script>
+  </head>
+  <body>
+    <main id="app">
+      <canvas id="warehouse"></canvas>
+      <header class="topbar">
+        <div class="brand"><span class="mark">▦</span><div><small>FLOWGRID / WMS TWIN · BUILD 2026.07.21.6</small><h1>智仓分拣中心</h1></div></div>
+        <div class="flow-steps"><span class="active">01 收货</span><i></i><span>02 上架</span><i></i><span class="active">03 拣选</span><i></i><span class="active">04 分拣</span><i></i><span>05 出库</span></div>
+        <div class="status"><b></b><span>系统运行中</span><time id="clock"></time></div>
+      </header>
+
+      <aside class="panel left-panel">
+        <p class="eyebrow">LIVE OPERATIONS</p><h2>作业总览</h2>
+        <div class="metrics">
+          <div><small>待处理订单</small><strong id="pending">24</strong><em>+ 12.8%</em></div>
+          <div><small>分拣准确率</small><strong>99.82<span>%</span></strong><em>目标 99.70%</em></div>
+          <div><small>输送线吞吐</small><strong id="throughput">1,286</strong><em>件 / 小时</em></div>
+          <div><small>货架利用率</small><strong>78<span>%</span></strong><em>2,496 / 3,200 格</em></div>
+        </div>
+        <section><div class="section-title"><span>波次进度</span><small>WAVE #2026-0721-A</small></div><div class="progress"><i></i></div><p class="muted">已拣选 186 / 240 件 · 预计 06:42 完成</p></section>
+        <section><div class="section-title"><span>异常队列</span><small class="amber">3 条</small></div><ul class="alerts"><li><b>01</b><span>SKU-A117 复核待确认</span><em>分拣口 S-02</em></li><li><b>02</b><span>AGV-04 电量偏低</span><em>18%</em></li><li><b>03</b><span>货架 B-03 补货建议</span><em>11 格</em></li></ul></section>
+      </aside>
+
+      <aside class="panel right-panel">
+        <p class="eyebrow">SORTATION CONTROL</p><h2>订单流</h2>
+        <div id="orders" class="orders"></div>
+        <p class="hint">点击订单可高亮其货物路线</p>
+        <section class="legend"><div><i class="cyan"></i>冷链 / 优先</div><div><i class="violet"></i>常规周转</div><div><i class="orange"></i>人工复核</div></section>
+      </aside>
+
+      <div class="dispatch-console"><span>装箱 / 打包 / 装车作业台</span><strong id="load-state">步骤 1 · 待装箱</strong><div><button id="box-products">1. 装箱</button><button id="seal-box" disabled>2. 封箱打包</button></div><div><button id="run-arm" disabled>3. 机械臂装车</button><button id="dispatch" disabled>4. 发车</button></div></div>
+
+      <footer><span>左键旋转 · 右键平移 · 滚轮缩放</span><span>资产：Kenney Factory Kit · CC0</span><span>场景：12,480 m² / 5 个作业区</span></footer>
+    </main>
+    <script type="module" src="./app.js?v=20260721-6"></script>
+  </body>
+</html>
