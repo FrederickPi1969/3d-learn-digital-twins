@@ -1,0 +1,52 @@
+SMART CAMPUS DIGITAL TWIN + FUTURE EXHIBITION SUITE
+Release: 3.0.0
+Validation date: 2026-07-21
+
+DEFAULT EXPERIENCE
+VITE_DEFAULT_EXPERIENCE=exhibition
+Direct exhibition URL: /?experience=exhibition
+Direct campus URL: /?experience=campus
+
+CORE EXHIBITION CONTENT
+48 data-driven exhibit booths
+4 curatorial zones, 12 booths per zone
+5 exhibit render modes
+2 local CC0 GLB demonstration models
+1 local EXR environment
+2 project-generated demonstration artworks
+3 offline embedded browser pages
+6 virtual operating-system applications
+1 draggable and resizable Windows-inspired desktop shell
+1 in-world live floor-map wall
+1 in-world interactive visitor kiosk
+
+SOURCE AND BUILD COUNTS
+Source files: 83
+Public files: 17
+Production modules transformed: 4,253
+Cesium runtime files: 389
+Exhibition media/runtime files: 14
+Exhibition lazy chunk: ExhibitionExperience-DGvB1-7y.js (133,435 bytes)
+
+VALIDATION
+TypeScript strict type check: passed
+ESLint: passed with zero errors and zero warnings
+Vitest: 7 files passed, 21 tests passed
+Vite production build: passed
+Release asset validation: passed
+Static production HTTP checks: passed
+
+STATIC PRODUCTION HTTP CHECKS
+/                                                    200 text/html
+/?experience=exhibition                              200 text/html
+/embedded/home.html                                  200 text/html
+/embedded/collection.html                            200 text/html
+/models/exhibition/stanford-bunny.glb                200 model/gltf-binary
+/artworks/digital-twin-gallery.png                   200 image/png
+/environments/night-gallery.exr                      200 image/aces
+/draco/draco_decoder.wasm                            200 application/wasm
+/cesium/Workers/createGeometry.js                    200 text/javascript
+/cesium/Widgets/widgets.css                          200 text/css
+
+VISUAL ACCEPTANCE NOTE
+The source, unit tests, production build, release assets and static production routes were validated in the build container. The container did not expose a reliable hardware or software WebGL graphics context for a trustworthy screenshot regression. Perform final visual acceptance in a WebGL 2-capable desktop browser on the target graphics hardware.

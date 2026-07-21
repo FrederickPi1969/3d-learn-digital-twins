@@ -1,31 +1,41 @@
 # Change Log
 
+## 3.0.0 — Future Exhibition Hall and Visitor Operating System
+
+This release adds an independently loadable futuristic exhibition experience to the existing smart-campus, environment, night-rendering and Cesium GIS suite.
+
+### Exhibition hall
+
+Added a modern minimalist 50-by-36-meter art hall with 48 interactive booths across four curatorial zones. The hall includes reflective flooring, curved architectural elements, ceiling ribs, edge lighting, physical materials, image-based lighting, contact shadows, atmospheric fog and configurable postprocessing.
+
+Added five exhibit render paths: framed digital works, procedural sculptures, heritage vitrines, holographic installations and imported GLB models. Exhibit metadata drives the Three.js scene, floor plan, detail panel, digital collection and camera navigation from one source of truth.
+
+Added animated ambient visitors, exhibit labels, zone filtering, a mini map, a full-screen navigation map, camera presets and smooth exhibit focus.
+
+### Digital screens
+
+Added an in-world wall-sized navigation display that embeds a live React floor-plan interface into the Three.js scene. The map exposes all 48 booths and synchronizes selection with the 3D scene.
+
+Added an in-world visitor kiosk. Selecting the kiosk opens a full-screen virtual visitor desktop.
+
+### Virtual operating system
+
+Added a Windows-inspired but brand-neutral desktop shell with boot sequence, wallpaper, desktop shortcuts, start menu, taskbar, system tray, notifications and session reset.
+
+Added draggable, resizable, minimizable and maximizable windows powered by `react-rnd`. Added six applications: browser, floor plan, digital collection, facility operations, public program and settings.
+
+The browser supports local pages and external iframe URLs, with navigation history, reload, quick links and external-open fallback. Added three local embedded pages so the browser remains functional without internet access.
+
+### Integration and release engineering
+
+Added `experienceMode` to the shared Zustand store and a lazy exhibition route within the existing application shell. Added the “未来展厅” bottom-navigation entry, `H` mode toggle and direct query entry through `?experience=exhibition`.
+
+Added exhibition data and state tests. Expanded release validation to verify the lazy exhibition chunk, GLB models, Draco runtime, environment map, concept artworks and embedded portal in addition to the existing Cesium runtime resources.
+
 ## 2.0.0 — Environment, Night Rendering and GIS Extension
 
-该版本只记录相对于原始智慧园区 Starter 的增量。
+Added rain, snow, sandstorm, cloud and lightning systems; instanced vegetation with shader wind; animated vehicles and pedestrians; day, dusk and night rendering; and a CesiumJS mode with WGS84, East-North-Up local coordinates, GeoJSON and optional 3D Tiles.
 
-### 天气与环境
+## 1.0.0 — Smart Campus Starter
 
-新增晴朗、降雨、降雪和沙尘四种环境状态。降雨、降雪和沙尘使用单个 BufferGeometry 与图形处理器点精灵着色器渲染，粒子体积随摄像机在水平面移动，避免摄像机离开固定粒子盒后天气消失。新增程序化云层、雨滴地面涟漪、积雪噪声覆盖、沙尘流带、随机雷暴闪电，以及天气驱动的雾距离、天空颜色和灯光强度。
-
-### 绿化
-
-新增确定性植被生成器，支持乔木、针叶树和灌木。生成过程会排除楼宇体块和道路缓冲区。树干、树冠和灌木分别使用 InstancedMesh；树冠材质通过 `onBeforeCompile` 注入顶点风摆，风速与环境面板联动。
-
-### 动态实体
-
-新增车辆和员工。车辆沿园区道路的 Catmull–Rom 曲线移动，使用实例化车体、车窗、前灯和尾灯，并为少量前景车辆配置移动点光源。员工沿步行路线循环移动，使用实例化身体部件和程序化步态。实体数量和速度支持运行时调整。
-
-### 三维夜景
-
-新增日间、黄昏、夜景和自动时间模式。夜景模块包含天空渐变、星空、月亮、楼宇幕墙窗光、轮廓灯、路灯、地面光池、楼顶旋转探照灯、雨天地面高光与反射，以及天气自适应的 Bloom、颜色校正、噪声和暗角。
-
-### Cesium 地理信息系统
-
-新增按需加载的 CesiumJS 渲染模式。园区局部坐标通过 East-North-Up 变换锚定到 WGS84 经纬度。Cesium 模式包含离线网格地球、园区楼宇、道路、植被、GeoJSON 功能分区、楼宇拾取和摄像机读数。
-
-新增 3D Tiles URL、Cesium ion Asset ID 和 Cesium OSM Buildings 接入。单击 Cesium 楼宇可选择业务对象；双击会切回 Three.js 并进入对应楼宇内部视图。
-
-### 工程与部署
-
-新增环境与 GIS 控制中心、天气和昼夜快捷键、自适应像素比和交互期间性能降级。Vite 构建会把 Cesium 的 Workers、Assets、ThirdParty 和 Widgets 复制到正确的 `/cesium/` 目录。新增 GIS、环境、程序化植被和扩展状态测试。
+Initial smart-campus Three.js scene, interactive buildings, building interior view, operational boards, TypeScript build, tests, Docker and Nginx deployment.

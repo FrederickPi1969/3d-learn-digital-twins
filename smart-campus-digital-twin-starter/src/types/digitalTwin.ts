@@ -1,6 +1,7 @@
 export type Vec2 = readonly [number, number]
 export type Vec3 = readonly [number, number, number]
 
+export type ExperienceMode = 'campus' | 'exhibition'
 export type ViewMode = 'campus' | 'building'
 export type RenderMode = 'twin' | 'gis'
 export type WeatherKind = 'clear' | 'rain' | 'snow' | 'sandstorm'

@@ -1,28 +1,48 @@
 # Release Validation
 
-Release validation date: 2026-07-21.
+Validation date: 2026-07-21.
 
 The following commands completed successfully in the packaged source tree:
 
 ```bash
 npm run typecheck
 npm run lint
-npm run test
+npm test
 npm run build
 npm run validate:release
 ```
 
-Results:
+Validated results for version 3.0.0:
 
 ```text
 TypeScript strict type check: passed
 ESLint: passed with zero errors and zero warnings
-Vitest: 5 test files passed, 14 tests passed
-Vite production build: passed
+Vitest: 7 test files passed, 21 tests passed
+Vite production build: passed; 4,253 modules transformed
+Exhibition lazy chunk: present; approximately 133 KB before gzip
+Exhibition data invariant: exactly 48 unique booths, 12 per zone
+Local GLB models and Draco decoder: present
+Local EXR environment and concept artwork: present
+Embedded exhibition portal pages: present
 Cesium runtime deployment check: passed
-Cesium runtime resources copied into dist/cesium: 389 files
+Cesium runtime resources under dist/cesium: 389 files
 ```
 
-The release checker verifies that Cesium Workers, Assets, ThirdParty resources and Widgets are rooted directly under `/cesium/`, rather than under an accidental nested `node_modules` path.
+The release checker rejects an accidental `dist/cesium/node_modules` nesting error, verifies package identity and required direct dependencies, checks minimum asset sizes, and scans `dist/assets` for exactly one lazy `ExhibitionExperience` JavaScript chunk.
 
-A final WebGL visual regression screenshot was not generated inside the build container because its headless Chromium runtime could not initialize an EGL/ANGLE graphics context. The application still passed source, test, and production-build validation. Run the project in a WebGL 2-capable desktop browser for final visual acceptance on the target graphics hardware.
+A production preview server was started from `dist` and the following paths returned HTTP 200 with the expected resource type:
+
+```text
+/
+/?experience=exhibition
+/embedded/home.html
+/embedded/collection.html
+/models/exhibition/stanford-bunny.glb
+/artworks/digital-twin-gallery.png
+/environments/night-gallery.exr
+/draco/draco_decoder.wasm
+/cesium/Workers/createGeometry.js
+/cesium/Widgets/widgets.css
+```
+
+A headless WebGL screenshot was attempted inside the build container, but the container Chromium process could not initialize an EGL/ANGLE graphics context. The failure occurred before application rendering and is a limitation of the container graphics runtime. Source validation, unit tests, production bundling, production asset validation and static resource checks are not dependent on that unavailable context. Final visual acceptance should be performed in a WebGL 2-capable desktop browser on the target graphics hardware.

@@ -81,7 +81,7 @@ export function HudShell() {
           <>
             <span>左键拖动平移</span>
             <span>滚轮缩放</span>
-            <span>右键/双指旋转</span>
+            <span>右键旋转</span>
             <span>点击楼宇进入剖析</span>
           </>
         )}

@@ -17,9 +17,7 @@ export function CameraRig() {
   const viewMode = useDigitalTwinStore((state) => state.viewMode)
   const selectedBuildingId = useDigitalTwinStore((state) => state.selectedBuildingId)
   const cameraResetNonce = useDigitalTwinStore((state) => state.cameraResetNonce)
-  const cameraOrbitDelta = useDigitalTwinStore((state) => state.cameraOrbitDelta)
   const building = getBuildingById(selectedBuildingId)
-  const appliedOrbitDeltaRef = useRef(cameraOrbitDelta)
 
   const destination = useMemo(() => {
     if (viewMode !== 'building' || !building) {
@@ -49,19 +47,6 @@ export function CameraRig() {
     transitioningRef.current = true
     if (controlsRef.current) controlsRef.current.enabled = false
   }, [cameraResetNonce, destination])
-
-  useEffect(() => {
-    const orbitSteps = cameraOrbitDelta - appliedOrbitDeltaRef.current
-    appliedOrbitDeltaRef.current = cameraOrbitDelta
-    const controls = controlsRef.current
-    if (!controls || !orbitSteps || transitioningRef.current) return
-
-    camera.position
-      .sub(controls.target)
-      .applyAxisAngle(new THREE.Vector3(0, 1, 0), orbitSteps * (Math.PI / 12))
-      .add(controls.target)
-    controls.update()
-  }, [camera, cameraOrbitDelta])
 
   useFrame((_, delta) => {
     const controls = controlsRef.current
@@ -93,12 +78,6 @@ export function CameraRig() {
       enablePan
       enableZoom
       enableRotate
-      mouseButtons={{
-        LEFT: THREE.MOUSE.PAN,
-        MIDDLE: THREE.MOUSE.DOLLY,
-        RIGHT: THREE.MOUSE.ROTATE,
-      }}
-      touches={{ ONE: THREE.TOUCH.ROTATE, TWO: THREE.TOUCH.DOLLY_PAN }}
       screenSpacePanning={false}
       minDistance={viewMode === 'building' ? 5 : 13}
       maxDistance={viewMode === 'building' ? 28 : 72}

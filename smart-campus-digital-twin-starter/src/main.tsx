@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import App from './App'
 import './styles/globals.css'
 import './styles/hud.css'
+import './styles/exhibition.css'
 
 ;(window as typeof window & { CESIUM_BASE_URL?: string }).CESIUM_BASE_URL = '/cesium/'
 

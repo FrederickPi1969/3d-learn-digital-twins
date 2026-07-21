@@ -10,6 +10,22 @@ const resetStore = () => {
 describe('digital twin navigation and extension store', () => {
   beforeEach(resetStore)
 
+  it('switches between the exhibition experience and the original campus without stale state', () => {
+    expect(useDigitalTwinStore.getState().experienceMode).toBe('exhibition')
+
+    useDigitalTwinStore.getState().setExperienceMode('campus')
+    expect(useDigitalTwinStore.getState().experienceMode).toBe('campus')
+
+    useDigitalTwinStore.getState().enterBuilding('tower-a', 2)
+    useDigitalTwinStore.getState().setExperienceMode('exhibition')
+
+    const state = useDigitalTwinStore.getState()
+    expect(state.experienceMode).toBe('exhibition')
+    expect(state.viewMode).toBe('campus')
+    expect(state.selectedBuildingId).toBeNull()
+    expect(state.extensionPanelOpen).toBe(false)
+  })
+
   it('enters and exits a building deterministically', () => {
     useDigitalTwinStore.getState().enterBuilding('tower-a', 5)
     expect(useDigitalTwinStore.getState().renderMode).toBe('twin')

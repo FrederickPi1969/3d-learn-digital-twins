@@ -2,6 +2,8 @@ import { useEffect } from 'react'
 import { useDigitalTwinStore } from '@/store/useDigitalTwinStore'
 
 export function useKeyboardShortcuts() {
+  const experienceMode = useDigitalTwinStore((state) => state.experienceMode)
+  const setExperienceMode = useDigitalTwinStore((state) => state.setExperienceMode)
   const exitBuilding = useDigitalTwinStore((state) => state.exitBuilding)
   const requestCameraReset = useDigitalTwinStore((state) => state.requestCameraReset)
   const toggleLabels = useDigitalTwinStore((state) => state.toggleLabels)
@@ -15,9 +17,20 @@ export function useKeyboardShortcuts() {
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       const target = event.target
-      if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) return
+      const isTyping =
+        target instanceof HTMLInputElement ||
+        target instanceof HTMLTextAreaElement ||
+        target instanceof HTMLSelectElement ||
+        (target instanceof HTMLElement && target.isContentEditable)
 
       const key = event.key.toLowerCase()
+      if (key === 'h' && !isTyping) {
+        setExperienceMode(experienceMode === 'campus' ? 'exhibition' : 'campus')
+        return
+      }
+
+      if (experienceMode === 'exhibition' || isTyping) return
+
       if (event.key === 'Escape') {
         if (extensionPanelOpen) setExtensionPanelOpen(false)
         else exitBuilding()
@@ -36,8 +49,10 @@ export function useKeyboardShortcuts() {
     cycleDayPhase,
     cycleWeather,
     exitBuilding,
+    experienceMode,
     extensionPanelOpen,
     requestCameraReset,
+    setExperienceMode,
     setExtensionPanelOpen,
     toggleExtensionPanel,
     toggleLabels,

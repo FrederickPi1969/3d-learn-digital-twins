@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>数字展册</title>
+  <link rel="stylesheet" href="/embedded/portal.css" />
+</head>
+<body>
+  <div class="portal-shell">
+    <header class="portal-header">
+      <a class="portal-brand" href="/embedded/home.html"><span class="portal-brand__mark"></span><div><span>SMART EXHIBITION</span><strong>未来艺术馆访客门户</strong></div></a>
+      <nav class="portal-nav"><a href="/embedded/home.html">首页</a><a class="is-active" href="/embedded/collection.html">数字展册</a><a href="/embedded/guide.html">参观指南</a></nav>
+      <span class="portal-status"><i></i> COLLECTION INDEXED</span>
+    </header>
+    <main class="portal-main">
+      <div class="section-heading"><div><span>DIGITAL COLLECTION</span><strong>馆藏数字展册</strong></div><p>当前页面展示精选档案。交互操作系统内的“数字展册”应用包含完整 48 个展项及三维定位。</p></div>
+      <div class="collection-toolbar"><button class="is-active" data-zone-filter="ALL">全部展区</button><button data-zone-filter="A">A 区</button><button data-zone-filter="B">B 区</button><button data-zone-filter="C">C 区</button><button data-zone-filter="D">D 区</button></div>
+      <section class="collection-grid" data-collection-grid></section>
+    </main>
+    <footer class="portal-footer"><strong>Digital Collection Service</strong><span>12 selected records · 48 total records</span></footer>
+  </div>
+  <script src="/embedded/portal.js"></script>
+</body>
+</html>

@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import type {
   DayPhase,
+  ExperienceMode,
   GisExternalSource,
   RenderMode,
   ViewMode,
@@ -9,6 +10,7 @@ import type {
 import { clamp } from '@/utils/math'
 
 interface DigitalTwinState {
+  experienceMode: ExperienceMode
   viewMode: ViewMode
   renderMode: RenderMode
   selectedBuildingId: string | null
@@ -18,7 +20,6 @@ interface DigitalTwinState {
   effectsEnabled: boolean
   telemetryPaused: boolean
   cameraResetNonce: number
-  cameraOrbitDelta: number
 
   weatherKind: WeatherKind
   weatherIntensity: number
@@ -41,6 +42,8 @@ interface DigitalTwinState {
   showGisExternalTileset: boolean
   gisExternalSource: GisExternalSource
 
+  setExperienceMode: (mode: ExperienceMode) => void
+  toggleExperienceMode: () => void
   enterBuilding: (buildingId: string, defaultFloor?: number) => void
   exitBuilding: () => void
   selectBuilding: (buildingId: string | null) => void
@@ -52,7 +55,6 @@ interface DigitalTwinState {
   toggleEffects: () => void
   toggleTelemetry: () => void
   requestCameraReset: () => void
-  orbitCamera: (steps: number) => void
 
   setWeatherKind: (kind: WeatherKind) => void
   cycleWeather: () => void
@@ -79,10 +81,22 @@ interface DigitalTwinState {
   setGisExternalSource: (source: Partial<GisExternalSource>) => void
 }
 
+const getInitialExperienceMode = (): ExperienceMode => {
+  const configuredDefault: ExperienceMode =
+    import.meta.env.VITE_DEFAULT_EXPERIENCE === 'campus' ? 'campus' : 'exhibition'
+  if (typeof window === 'undefined') return configuredDefault
+
+  const requestedMode = new URLSearchParams(window.location.search).get('experience')
+  return requestedMode === 'campus' || requestedMode === 'exhibition'
+    ? requestedMode
+    : configuredDefault
+}
+
 const WEATHER_SEQUENCE: readonly WeatherKind[] = ['clear', 'rain', 'snow', 'sandstorm']
 const DAY_PHASE_SEQUENCE: readonly DayPhase[] = ['day', 'dusk', 'night', 'auto']
 
 export const useDigitalTwinStore = create<DigitalTwinState>()((set) => ({
+  experienceMode: getInitialExperienceMode(),
   viewMode: 'campus',
   renderMode: 'twin',
   selectedBuildingId: null,
@@ -92,7 +106,6 @@ export const useDigitalTwinStore = create<DigitalTwinState>()((set) => ({
   effectsEnabled: true,
   telemetryPaused: false,
   cameraResetNonce: 0,
-  cameraOrbitDelta: 0,
 
   weatherKind: 'clear',
   weatherIntensity: 0.72,
@@ -118,8 +131,29 @@ export const useDigitalTwinStore = create<DigitalTwinState>()((set) => ({
     ionAssetId: import.meta.env.VITE_CESIUM_ION_ASSET_ID ?? '',
   },
 
+  setExperienceMode: (mode) =>
+    set((state) => ({
+      experienceMode: mode,
+      renderMode: mode === 'exhibition' ? 'twin' : state.renderMode,
+      viewMode: 'campus',
+      selectedBuildingId: null,
+      hoveredBuildingId: null,
+      extensionPanelOpen: false,
+      cameraResetNonce: state.cameraResetNonce + 1,
+    })),
+  toggleExperienceMode: () =>
+    set((state) => ({
+      experienceMode: state.experienceMode === 'campus' ? 'exhibition' : 'campus',
+      renderMode: 'twin',
+      viewMode: 'campus',
+      selectedBuildingId: null,
+      hoveredBuildingId: null,
+      extensionPanelOpen: false,
+      cameraResetNonce: state.cameraResetNonce + 1,
+    })),
   enterBuilding: (buildingId, defaultFloor = 1) =>
     set({
+      experienceMode: 'campus',
       renderMode: 'twin',
       viewMode: 'building',
       selectedBuildingId: buildingId,
@@ -139,6 +173,7 @@ export const useDigitalTwinStore = create<DigitalTwinState>()((set) => ({
   setActiveFloor: (floor) => set({ activeFloor: Math.max(1, Math.round(floor)) }),
   setRenderMode: (mode) =>
     set((state) => ({
+      experienceMode: 'campus',
       renderMode: mode,
       viewMode: mode === 'gis' ? 'campus' : state.viewMode,
       hoveredBuildingId: null,
@@ -147,6 +182,7 @@ export const useDigitalTwinStore = create<DigitalTwinState>()((set) => ({
     })),
   toggleRenderMode: () =>
     set((state) => ({
+      experienceMode: 'campus',
       renderMode: state.renderMode === 'twin' ? 'gis' : 'twin',
       viewMode: 'campus',
       selectedBuildingId: null,
@@ -158,8 +194,6 @@ export const useDigitalTwinStore = create<DigitalTwinState>()((set) => ({
   toggleTelemetry: () => set((state) => ({ telemetryPaused: !state.telemetryPaused })),
   requestCameraReset: () =>
     set((state) => ({ cameraResetNonce: state.cameraResetNonce + 1 })),
-  orbitCamera: (steps) =>
-    set((state) => ({ cameraOrbitDelta: state.cameraOrbitDelta + steps })),
 
   setWeatherKind: (kind) => set({ weatherKind: kind }),
   cycleWeather: () =>

@@ -18,7 +18,6 @@ export function SceneToolbar() {
   const telemetryPaused = useDigitalTwinStore((state) => state.telemetryPaused)
   const extensionPanelOpen = useDigitalTwinStore((state) => state.extensionPanelOpen)
   const requestCameraReset = useDigitalTwinStore((state) => state.requestCameraReset)
-  const orbitCamera = useDigitalTwinStore((state) => state.orbitCamera)
   const cycleWeather = useDigitalTwinStore((state) => state.cycleWeather)
   const cycleDayPhase = useDigitalTwinStore((state) => state.cycleDayPhase)
   const toggleRenderMode = useDigitalTwinStore((state) => state.toggleRenderMode)
@@ -29,12 +28,6 @@ export function SceneToolbar() {
 
   return (
     <div className="scene-toolbar">
-      <button type="button" onClick={() => orbitCamera(-1)} title="向左旋转镜头">
-        <span>↶</span><small>左转</small>
-      </button>
-      <button type="button" onClick={() => orbitCamera(1)} title="向右旋转镜头">
-        <span>↷</span><small>右转</small>
-      </button>
       <button type="button" onClick={requestCameraReset} title="重置镜头（R）">
         <span>⌖</span><small>复位</small>
       </button>

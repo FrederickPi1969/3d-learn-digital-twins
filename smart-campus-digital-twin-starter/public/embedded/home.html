@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>未来艺术馆访客门户</title>
+  <link rel="stylesheet" href="/embedded/portal.css" />
+</head>
+<body>
+  <div class="portal-shell">
+    <header class="portal-header">
+      <a class="portal-brand" href="/embedded/home.html"><span class="portal-brand__mark"></span><div><span>SMART EXHIBITION</span><strong>未来艺术馆访客门户</strong></div></a>
+      <nav class="portal-nav"><a class="is-active" href="/embedded/home.html">首页</a><a href="/embedded/collection.html">数字展册</a><a href="/embedded/guide.html">参观指南</a><a href="#services">公共服务</a></nav>
+      <span class="portal-status"><i></i> LOCALHOST SECURE</span>
+    </header>
+
+    <section class="hero">
+      <div class="hero__copy">
+        <span class="eyebrow">AURORA FUTURE ART HALL / DIGITAL TWIN</span>
+        <h1>艺术、空间与实时计算的未来展览体验</h1>
+        <p>本地访客门户与 Three.js 三维展厅、48 个展位、墙面导航大屏和设施运维系统保持状态联动。浏览数字藏品、规划参观路线，并从交互终端直接返回三维空间。</p>
+        <div class="hero__actions"><a class="button" href="/embedded/collection.html">浏览数字展册</a><a class="button button--ghost" href="/embedded/guide.html">查看参观指南</a></div>
+      </div>
+      <aside class="hero__card">
+        <header><strong>展厅实时平面图</strong><span>更新于刚刚</span></header>
+        <div class="mini-map"><span class="mini-map__aisle"></span><div class="mini-map__booths"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+      </aside>
+    </section>
+
+    <main class="portal-main">
+      <div class="section-heading"><div><span>LIVE MUSEUM DATA</span><strong>今日展厅运行概览</strong></div><p>数据为学习用途的模拟遥测。实际项目可替换为 WebSocket、Message Queuing Telemetry Transport 或建筑管理系统接口。</p></div>
+      <section class="metric-grid"><article class="metric-card"><span>开放展位</span><strong>46 / 48</strong><small>2 个展项维护中</small></article><article class="metric-card"><span>今日客流</span><strong>2,156</strong><small>较昨日 +8.4%</small></article><article class="metric-card"><span>实时在馆</span><strong>198</strong><small>舒适容量 28%</small></article><article class="metric-card"><span>设备在线</span><strong>98%</strong><small>核心服务正常</small></article></section>
+
+      <section class="card-grid" id="services">
+        <article class="content-card"><div class="content-card__visual"><img src="/artworks/digital-twin-gallery.png" alt="未来艺术馆三维展厅" /><b>IMMERSIVE GALLERY</b></div><div class="content-card__body"><strong>三维展厅数字孪生</strong><p>浏览未来感展馆、程序化艺术、文物展柜、动态人群、光影与实时后期效果。</p><footer><span>48 个展位</span><span>Three.js</span></footer></div></article>
+        <article class="content-card"><div class="content-card__visual"><img src="/artworks/interactive-kiosk-study.png" alt="访客交互终端" /><b>VISITOR OPERATING SYSTEM</b></div><div class="content-card__body"><strong>访客交互操作系统</strong><p>窗口化浏览器、导航、数字展册、设施控制、活动日程与偏好设置运行于本地应用。</p><footer><span>6 个内置应用</span><span>React Rnd</span></footer></div></article>
+        <article class="content-card"><div class="content-card__visual"><b>SMART FLOOR NAVIGATION</b></div><div class="content-card__body"><strong>大屏与平面图联动</strong><p>墙面数字大屏、全屏地图和终端导航共享同一套展品数据与选择状态。</p><footer><span>实时联动</span><span>SVG + Zustand</span></footer></div></article>
+      </section>
+    </main>
+
+    <footer class="portal-footer"><strong>Smart Exhibition OS · Build 3.0.0</strong><span>Learning-purpose local application · No external telemetry</span></footer>
+  </div>
+</body>
+</html>

@@ -1,22 +1,37 @@
-# 智慧园区数字孪生 Extension Suite
+# 智慧园区数字孪生与未来艺术馆套件
 
-这是一个可直接本地部署、可继续工程化扩展的智慧园区与智能楼宇数字孪生前端工程。当前版本在原始园区与楼宇剖析能力上，新增了完整的天气、植被、动态实体、三维夜景和 Cesium 地理信息系统桥接模块。
+当前版本为 `3.0.0`。它在原有智慧园区、智能楼宇、环境天气、三维夜景和 Cesium 地理信息系统能力之上，新增一套可直接运行的未来艺术馆模块，以及运行在展厅交互终端中的轻量级虚拟操作系统。
 
-项目默认不依赖外部模型、地图服务或云端接口即可运行。Three.js 园区视图使用程序化楼宇、道路、停车场、植被和动态实体；Cesium 视图默认使用离线网格底图。配置 Cesium ion Token、3D Tiles URL 或 ion Asset ID 后，可以进一步加载全球建筑和外部地理空间数据。
+项目不要求外部应用程序接口、在线地图或云服务即可启动。展厅、48 个展位、程序化展品、两件本地 GLB 模型、本地展览网页、虚拟桌面和大屏平面图全部随源码交付。Cesium ion、外部 3D Tiles 和互联网网页均为可选能力。
 
-## 快速启动
+## 启动
+
+要求 Node.js 20.19 或更高版本。
 
 ```bash
 npm ci
 npm run dev
 ```
 
-默认开发地址为 `http://localhost:5173`。
+默认地址：
 
-生产构建与预览：
+```text
+http://localhost:5173
+```
+
+默认落地体验由 `.env` 中的 `VITE_DEFAULT_EXPERIENCE` 决定，当前示例配置为 `exhibition`。也可以分别使用 `npm run dev:exhibition` 和 `npm run dev:campus` 启动指定体验。
+
+直接进入未来艺术馆：
+
+```text
+http://localhost:5173/?experience=exhibition
+```
+
+生产构建：
 
 ```bash
 npm run build
+npm run validate:release
 npm run preview
 ```
 
@@ -26,222 +41,147 @@ Docker 部署：
 docker compose up --build
 ```
 
-默认 Docker 地址为 `http://localhost:8080`。
-
-项目要求 Node.js 20.19 或更高版本。仓库包含锁定依赖版本的 `package-lock.json`。
-
-## 当前实现
-
-| 能力 | 实现方式 |
-|---|---|
-| 园区拖动、缩放、旋转 | Three.js MapControls；左键平移、滚轮缩放、右键旋转 |
-| 楼宇拾取与进入 | React Three Fiber 指针拾取、楼宇悬停反馈、阻尼镜头过渡 |
-| 楼宇内部剖析 | 半透明外壳、楼层爆炸视图、房间状态、垂直数据流、扫描面和楼宇级 Board |
-| 天气系统 | 图形处理器粒子着色器实现降雨、降雪和沙尘；摄像机跟随体积；地面涟漪、积雪和尘雾覆盖 |
-| 雷暴与云层 | 程序化云层、随机闪电、环境光和雾化联动 |
-| 植被 | InstancedMesh 批量渲染乔木、针叶树和灌木；确定性布局；建筑和道路碰撞避让 |
-| 植被风摆 | `onBeforeCompile` 注入顶点着色器，风摆幅度与天气风速联动 |
-| 动态车辆 | Catmull–Rom 样条路径、实例化车体、车窗、前后灯与少量移动点光源 |
-| 动态人员 | 实例化身体、头部和腿部；沿步行路径循环移动；包含步态摆动和上下起伏 |
-| 三维夜景 | 程序化天空、星空、月亮、暖色窗光、青蓝轮廓灯、路灯光池、探照灯、湿地反射和 Bloom |
-| 后期处理 | Bloom、亮度对比度、色相饱和度、噪声和暗角，按昼夜和天气动态调节 |
-| 地理信息系统模式 | CesiumJS Viewer、WGS84 地球坐标、局部 East-North-Up 坐标桥接、GeoJSON 功能分区 |
-| 外部地理数据 | 支持 3D Tiles URL、Cesium ion Asset ID 和 Cesium OSM Buildings |
-| 双引擎联动 | Cesium 单击选择楼宇；双击楼宇切回 Three.js 并进入对应楼宇内部模式 |
-| 运行时控制 | 天气、强度、风速、雷暴、昼夜、路灯、探照灯、绿化密度、车辆、人员、速度和 GIS 图层 |
-| 工程质量 | TypeScript 严格模式、ESLint、Vitest、Vite 生产构建、Docker、Nginx 和 Cesium 静态资源部署 |
-
-## 双引擎架构
+Docker 默认地址：
 
 ```text
-                                  React DOM HUD
-              ┌────────────────────────────────────────────────┐
-              │ 顶栏 / 宏观 Board / 楼宇 Board / 工具栏 / 面板 │
-              └──────────────────────┬─────────────────────────┘
-                                     │ Zustand 共享状态
-                       ┌─────────────┴─────────────┐
-                       │                           │
-             renderMode = twin          renderMode = gis
-                       │                           │
-                       ▼                           ▼
-       React Three Fiber + Three.js              CesiumJS
-       ┌───────────────────────────┐   ┌─────────────────────────────┐
-       │ 局部米制园区坐标           │   │ WGS84 地球坐标              │
-       │ 楼宇 / 室内 / 道路         │   │ 离线网格底图                 │
-       │ 天气 / 植被 / 人车         │   │ 本地 ENU 园区实体            │
-       │ 夜景 / 后期处理            │   │ GeoJSON / 3D Tiles / OSM     │
-       └──────────────┬────────────┘   └──────────────┬──────────────┘
-                      │                               │
-                      └──────── 楼宇业务标识 ─────────┘
-                         tower-a / tower-b / ...
+http://localhost:8080
 ```
 
-Three.js 负责园区级高表现力数字孪生和单体楼宇内部效果。Cesium 负责城市、区域和全球尺度的地理空间组织。两个引擎不共享同一个 WebGL 场景，而是通过稳定的楼宇业务标识、地理锚点和 Zustand 状态进行切换和联动，这种边界比强行把两套渲染器叠在同一个 Canvas 中更容易维护。
-
-## 页面与渲染层级
+## 三套体验
 
 ```text
-浏览器窗口
-┌──────────────────────────────────────────────────────────────────────┐
-│ HUD：顶栏、状态条、左侧 Board、右侧 Board、底部导航、扩展控制中心   │
-│                                                                      │
-│  Three.js 模式                              Cesium 模式               │
-│  ┌────────────────────────────┐             ┌──────────────────────┐ │
-│  │ EnvironmentRig             │             │ Viewer / Globe       │ │
-│  │ BackdropCity               │             │ GridImageryProvider  │ │
-│  │ CampusGround + ScanGrid    │             │ Local ENU Campus     │ │
-│  │ Roads + Buildings          │             │ GeoJSON Zones        │ │
-│  │ Trees + DynamicEntities    │             │ Optional 3D Tiles    │ │
-│  │ NightLighting              │             │ GIS Weather Overlay  │ │
-│  │ WeatherSystem              │             └──────────────────────┘ │
-│  │ Postprocessing             │                                      │
-│  └────────────────────────────┘                                      │
-│                                                                      │
-│                  Bottom Navigation + Scene Toolbar                   │
-└──────────────────────────────────────────────────────────────────────┘
+                           同一个 React 应用
+                                  │
+                 ┌────────────────┼────────────────┐
+                 │                │                │
+                 ▼                ▼                ▼
+         Three.js 园区       Cesium GIS       未来艺术馆
+         楼宇与室内          地球与 3D Tiles    展厅与虚拟系统
+                 │                │                │
+                 └────────────────┴────────────────┘
+                           Zustand 状态边界
 ```
 
-## 快捷键
+智慧园区模式包含园区拖动、缩放、旋转、楼宇拾取、楼宇内部剖析、天气、植被、人员车辆和夜景。Cesium 模式包含 WGS84 地球坐标、East-North-Up 局部坐标桥接、GeoJSON、3D Tiles 和园区业务对象联动。未来艺术馆模式独立按需加载，避免展厅代码进入园区首屏的同步渲染路径。
 
-| 按键 | 行为 |
-|---|---|
-| `W` | 循环切换晴朗、降雨、降雪和沙尘 |
-| `N` | 循环切换日间、黄昏、夜景和自动昼夜 |
-| `G` | 切换 Three.js 数字孪生与 Cesium 地理信息系统 |
-| `E` | 打开或关闭扩展控制中心 |
-| `R` | 重置当前渲染引擎的摄像机 |
-| `L` | 显示或隐藏楼宇标签 |
-| `Escape` | 关闭扩展面板，或从楼宇模式返回园区 |
+## 未来艺术馆实现范围
+
+展厅包含 48 个可交互展位，分为数字艺术、当代雕塑、文物设计和未来实验四个策展区，每区 12 个展位。展位数据统一定义在 `src/data/exhibition.ts`，展品类型包括数字画作、程序化雕塑、文物展柜、全息装置和导入的 GLB 模型。
+
+展厅几何采用程序化建筑骨架，包含弧形立面、墙面展槽、中央展岛、反射地面、顶棚灯带、导光边框和空间雾。光照管线包含环境贴图、物理材质、局部点光源、聚光灯、接触阴影、Bloom、色调调整、暗角和噪声。镜头使用 `camera-controls`，支持平滑阻尼、拖动旋转、滚轮缩放、光标位置缩放和展品自动聚焦。
+
+墙面数字大屏在三维空间内嵌套真实 React 界面，显示 48 个展位的平面图、分区、客流、设备在线率和当前位置。点击大屏内展位可以同步选择三维展品；双击大屏或点击“打开全屏导航”会打开全屏平面图。交互终端同样使用三维空间中的 React 界面作为屏幕预览，点击后进入全屏虚拟桌面。
+
+环境中还包含可调数量的程序化访客。访客使用共享几何体、材质和循环路径，避免为每个人建立复杂骨骼动画。展厅主要展品使用程序化几何和少量轻量模型，以保持首屏体积、图形处理器负载和替换成本之间的平衡。
+
+## 轻量级虚拟操作系统
+
+虚拟系统并不试图模拟完整 Windows 内核。它是运行在当前 React 应用内部的访客操作环境，提供桌面、开始菜单、任务栏、系统托盘、通知区域、窗口管理和六个内置应用。
+
+```text
+虚拟桌面
+├── Exhibition Browser        浏览器
+├── Exhibition Floor Map      展厅导航
+├── Digital Collection        数字展册
+├── Facility Operations       设备控制
+├── Public Program            活动日程
+└── System Settings           系统设置
+```
+
+窗口由 `react-rnd` 实现，可拖动、缩放、最小化、最大化、聚焦和关闭。图标使用 `lucide-react`，过渡动画使用 Motion。虚拟系统只在打开时挂载；关闭后不会持续占用窗口布局和 iframe 资源。
+
+浏览器应用具备地址栏、前进、后退、刷新、主页、快速链接、浏览历史和外部打开。随项目附带三个本地网页：展厅首页、数字展册和参观指南，能够在任何本地部署环境中稳定加载。
+
+外部网页通过受限 `iframe` 加载。这是浏览器允许的真实网页嵌入方式，但无法绕过目标站点的 `Content-Security-Policy` 或 `X-Frame-Options`。禁止被嵌套的网站会显示空白或拒绝加载，此时可使用浏览器工具栏中的“外部打开”。这属于浏览器安全边界，不是本项目缺陷。生产环境建议将允许访问的地址改为白名单，并按业务要求调整 iframe 的 `sandbox` 权限。
+
+## 交互方式
+
+园区底部导航中的“未来展厅”进入展厅，`H` 在园区和展厅之间切换。展厅内使用鼠标拖动旋转，滚轮缩放，点击展品聚焦。数字键 `1` 切换总览，`2` 聚焦导航大屏，`3` 聚焦交互终端，`M` 打开平面图，`O` 打开虚拟系统，`Escape` 按层级关闭虚拟系统、平面图或展品选择。
 
 ## 技术栈
 
-| 层级 | 方案 | 作用 |
+| 层级 | 技术 | 用途 |
 |---|---|---|
-| 构建与开发 | Vite + TypeScript | 热更新、严格类型、代码分块和生产构建 |
-| 用户界面 | React 19 + Motion | Board、控制面板、视图切换和界面过渡 |
-| 三维渲染 | Three.js + WebGL | 几何、材质、着色器、灯光、相机、实例化和拾取 |
-| React 三维绑定 | React Three Fiber | 用 React 组件组织 Three.js 场景图 |
-| 三维工具集 | Drei | MapControls、Html、Edges、Instances、反射材质和自适应像素比 |
-| 后期处理 | React Postprocessing | Bloom、颜色校正、噪声和暗角 |
-| 地理信息系统 | CesiumJS | WGS84 地球、局部 ENU、GeoJSON、3D Tiles 和 OSM Buildings |
-| 应用状态 | Zustand | 双引擎、视角、楼宇、楼层、天气、灯光、实体和 GIS 图层状态 |
-| 测试与质量 | ESLint + Vitest | 静态检查、状态、坐标转换和程序化数据测试 |
-| 部署 | Nginx + Docker | 静态站点部署、单页应用回退和 Cesium 运行资源分发 |
-
-## 环境变量
-
-复制示例文件：
-
-```bash
-cp .env.example .env
-```
-
-```dotenv
-# 可选。离线 GIS 示例不需要 Token。
-VITE_CESIUM_ION_TOKEN=
-
-# 可选。外部 3D Tiles 的 tileset.json 地址。
-VITE_CESIUM_3D_TILES_URL=
-
-# 可选。Cesium ion 中的 3D Tiles Asset ID。
-VITE_CESIUM_ION_ASSET_ID=
-```
-
-没有 Token 时，Cesium 模式仍会显示离线网格地球、园区楼宇、道路、绿化和 GeoJSON 分区。Cesium OSM Buildings 和 ion Asset ID 需要有效 Token。外部 URL 方式还需要资源服务器允许浏览器跨域访问。
+| 应用框架 | React 19、TypeScript、Vite | 应用外壳、类型系统、代码分块和构建 |
+| 三维场景 | Three.js、React Three Fiber | 展厅、展品、灯光、材质、拾取和动画 |
+| 三维组件 | Drei、camera-controls | HTML 屏幕、圆角几何、阴影、相机控制和资源加载 |
+| 视觉后期 | React Postprocessing、postprocessing | Bloom、色彩、噪声和暗角 |
+| 窗口系统 | react-rnd | 可拖动、可缩放的桌面应用窗口 |
+| 图标与动效 | Lucide React、Motion | 虚拟桌面图标和界面过渡 |
+| 状态管理 | Zustand | 园区、GIS、展厅、镜头、展品和应用状态 |
+| 地理信息系统 | CesiumJS | WGS84、GeoJSON、3D Tiles 和地球级视图 |
+| 质量与部署 | ESLint、Vitest、Nginx、Docker | 静态检查、测试、构建和静态部署 |
 
 ## 关键目录
 
 ```text
 src/
 ├── components/
-│   ├── scene/
-│   │   ├── EnvironmentRig.tsx          天空、雾、昼夜、主光和闪电
-│   │   ├── WeatherSystem.tsx           三维天气粒子、云层和地面覆盖
-│   │   ├── Trees.tsx                   实例化植被和顶点风摆
-│   │   ├── DynamicEntities.tsx         车辆与员工路径动画
-│   │   ├── NightLighting.tsx           路灯、光池和楼顶探照灯
-│   │   ├── Building.tsx                程序化幕墙、窗光和楼宇拾取
-│   │   ├── CampusGround.tsx            地面、停车场和屏幕空间反射
-│   │   ├── SceneEffects.tsx            后期处理
-│   │   └── BuildingInterior.tsx        楼宇内部剖析
-│   ├── gis/
-│   │   └── CesiumMap.tsx               Cesium Viewer 和双引擎联动
-│   └── hud/
-│       └── EnvironmentControlPanel.tsx 环境与 GIS 扩展控制中心
+│   ├── exhibition/
+│   │   ├── scene/                 展厅建筑、灯光、展位、屏幕、访客、相机、后期
+│   │   ├── ui/                    展厅 HUD、平面图、展签、控制坞
+│   │   └── os/                    虚拟桌面、窗口系统和六个应用
+│   ├── scene/                     智慧园区 Three.js 场景
+│   ├── gis/                       Cesium 地理信息系统
+│   └── hud/                       园区 HUD 与模式导航
 ├── data/
-│   ├── campus.ts                       园区、楼宇、道路和停车场配置
-│   ├── environment.ts                  植被、路灯、人员路径和夜景锚点
-│   └── gis.ts                          地理锚点、分区和 GeoJSON 转换
-├── store/useDigitalTwinStore.ts        全局状态与动作
-├── services/digitalTwinDataSource.ts   业务遥测数据源边界
-└── styles/                             HUD、Cesium 和扩展面板样式
+│   ├── exhibition.ts              48 个展位、展品、日程和设备数据
+│   ├── campus.ts                  园区数据
+│   ├── environment.ts             天气、植被、人车和灯光锚点
+│   └── gis.ts                     地理锚点和 GeoJSON 转换
+├── store/
+│   ├── useExhibitionStore.ts      展厅与虚拟系统状态
+│   └── useDigitalTwinStore.ts     园区、GIS 与体验模式状态
+└── styles/exhibition.css          展厅 HUD、地图、虚拟桌面和应用样式
+
+public/
+├── artworks/                      本项目演示画作
+├── models/exhibition/             可替换的 CC0 学习模型
+├── environments/                  展厅环境贴图
+├── draco/                         GLB Draco 解码器
+└── embedded/                      浏览器内置的本地网页
 ```
 
-## 最常修改的入口
+## 常见扩展入口
 
-园区楼宇、道路和停车场：
+新增或替换展品时，先编辑 `src/data/exhibition.ts`。普通画作可填写 `imageUrl`，导入模型可填写 `modelUrl`，展品的空间位置使用 `[x, y, z]` 米制局部坐标。新增展品类型时扩展 `ExhibitDisplayKind`，再在 `src/components/exhibition/scene/ExhibitBooth.tsx` 中增加对应渲染分支。
 
-```text
-src/data/campus.ts
+新增虚拟系统应用时，在 `src/types/exhibition.ts` 中扩展 `ExhibitionAppId`，在 `src/components/exhibition/os/apps/` 下创建应用组件，然后在 `VirtualOSOverlay.tsx` 中注册标题、图标、默认尺寸和渲染映射。窗口拖动、层级、最大化和任务栏行为不需要重新实现。
+
+接入真实展厅数据时，建议保持 `ExhibitConfig` 作为前端稳定模型，在数据源适配层完成后端字段映射。设备状态、客流、日程和展品内容可以分别接入 Hypertext Transfer Protocol、WebSocket、Message Queuing Telemetry Transport 网关或数字资产管理系统，不应让三维组件直接依赖后端响应结构。
+
+模型资产建议使用 GLB，桌面展品控制在约 20,000 至 80,000 个三角形，批量展品优先复用材质和纹理图集。大模型应使用网格简化、KTX2 纹理、Draco 或 Meshopt 压缩，并按视距设置 Level of Detail。详细规范见 `docs/ASSET_PIPELINE.md`。
+
+## Cesium 环境变量
+
+```bash
+cp .env.example .env
 ```
 
-植被生成区域、路灯采样、人员路线和探照灯楼宇：
-
-```text
-src/data/environment.ts
+```dotenv
+VITE_CESIUM_ION_TOKEN=
+VITE_CESIUM_3D_TILES_URL=
+VITE_CESIUM_ION_ASSET_ID=
 ```
 
-真实项目经纬度锚点和功能分区：
+没有 Token 时，Cesium 模式仍会显示本地园区对象和离线网格地球。外部 3D Tiles 还需要资源服务器允许跨域访问。
 
-```text
-src/data/gis.ts
-```
+## 生产部署注意事项
 
-环境和 GIS 控件：
+Cesium 会在运行时动态加载 `Workers`、`Assets`、`ThirdParty` 和 `Widgets`。Vite 构建把这些文件复制到 `dist/cesium/`，并将 `CESIUM_BASE_URL` 设置为 `/cesium/`。部署时必须完整上传 `dist`，不能只上传 `dist/assets`。
 
-```text
-src/components/hud/EnvironmentControlPanel.tsx
-```
+单页应用服务器需要把未知路径回退到 `index.html`，但不得把模型、纹理、嵌入网页或 Cesium Worker 的真实 404 错误改写成 HTML。仓库中的 Nginx 配置已经处理了这些路径。
 
-真实数据接入边界：
-
-```text
-src/services/digitalTwinDataSource.ts
-```
-
-## Cesium 静态资源
-
-Cesium 运行时会动态请求 `Workers`、`Assets`、`ThirdParty` 和 `Widgets`。Vite 构建配置会把这些目录复制到：
-
-```text
-dist/cesium/Workers
-dist/cesium/Assets
-dist/cesium/ThirdParty
-dist/cesium/Widgets
-```
-
-`CESIUM_BASE_URL` 设置为 `/cesium/`。不要在部署时只上传 `dist/assets` 而遗漏 `dist/cesium`，否则地理信息系统模式会出现 Worker 或资源加载错误。
-
-## 验证命令
+## 验证
 
 ```bash
 npm run typecheck
 npm run lint
-npm run test
+npm test
 npm run build
 npm run validate:release
 ```
 
-当前版本通过 TypeScript 严格类型检查、ESLint、5 个测试文件中的 14 项测试，以及包含 389 个 Cesium 运行资源的 Vite 生产构建。
+`validate:release` 会验证主入口、未来艺术馆异步代码块、Cesium 运行资源、展厅模型、环境贴图、演示画作和内置网页是否完整进入生产目录，并拒绝错误嵌套的 Cesium `node_modules` 路径。
 
-## 文档
-
-`CHANGELOG.md` 只列出本次扩展相对于原始 Starter 的新增内容。
-
-`docs/ENVIRONMENT_GIS_EXTENSION.md` 详细说明天气、绿化、动态实体、夜景、双引擎坐标和 3D Tiles 接入设计。
-
-`docs/PROJECT_ANALYSIS.md` 解释参考大屏的布局、镜头、光效和三维表达。
-
-`docs/ASSET_PIPELINE.md` 给出从数字内容创作工具或建筑信息模型到 Web 端 GLB 的资产规范。
-
-`docs/PERFORMANCE_PLAYBOOK.md` 给出大园区、海量点位和移动端的性能治理策略。
+更详细的展厅设计说明见 `docs/EXHIBITION_HALL_EXTENSION.md`，虚拟浏览器的安全边界见 `docs/VIRTUAL_OS_BROWSER_NOTES.md`，第三方素材与依赖说明见 `ATTRIBUTIONS.md`。

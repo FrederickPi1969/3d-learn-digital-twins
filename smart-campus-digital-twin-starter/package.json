@@ -1,9 +1,9 @@
 {
-  "name": "smart-campus-digital-twin-extension-suite",
+  "name": "smart-campus-digital-twin-exhibition-suite",
   "private": true,
-  "version": "2.0.0",
+  "version": "3.0.0",
   "type": "module",
-  "description": "A production-minded smart-campus digital twin with Three.js weather, night rendering, dynamic entities, vegetation, and Cesium GIS integration.",
+  "description": "A production-minded smart-campus digital twin extended with a futuristic 48-booth Three.js exhibition hall and an embedded Windows-inspired visitor operating system.",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
@@ -11,7 +11,10 @@
     "typecheck": "tsc -b --pretty false",
     "lint": "eslint .",
     "test": "vitest run",
-    "validate:release": "node scripts/validate-release.mjs"
+    "validate:release": "node scripts/validate-release.mjs",
+    "dev:exhibition": "vite --open '/?experience=exhibition'",
+    "dev:campus": "vite --open '/?experience=campus'",
+    "check": "npm run typecheck && npm run lint && npm run test && npm run build && npm run validate:release"
   },
   "engines": {
     "node": ">=20.19.0"
@@ -20,11 +23,14 @@
     "@react-three/drei": "10.7.7",
     "@react-three/fiber": "9.6.1",
     "@react-three/postprocessing": "3.0.4",
+    "camera-controls": "3.1.2",
     "cesium": "^1.143.0",
+    "lucide-react": "^1.25.0",
     "motion": "12.42.2",
     "postprocessing": "6.39.3",
     "react": "19.2.7",
     "react-dom": "19.2.7",
+    "react-rnd": "^10.5.3",
     "three": "0.185.1",
     "three-stdlib": "2.36.1",
     "zustand": "5.0.14"
