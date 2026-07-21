@@ -94,18 +94,21 @@ function WallNavigationDashboard() {
 }
 
 function UnifiedWallSurface() {
+  return <div className="embedded-wall-screen-surface"><WallNavigationDashboard /></div>
+}
+
+function VisitorSystemFocusLayer() {
   const osOpen = useExhibitionStore((state) => state.osOpen)
   const initialApp = useExhibitionStore((state) => state.osInitialApp)
   const sessionNonce = useExhibitionStore((state) => state.osSessionNonce)
+  if (!osOpen) return null
 
   return (
-    <div className="embedded-wall-screen-surface">
-      {osOpen ? (
-        <VirtualDesktop key={sessionNonce} initialApp={initialApp} embedded />
-      ) : (
-        <WallNavigationDashboard />
-      )}
-    </div>
+    <Html fullscreen zIndexRange={[1200, 0]}>
+      <div className="virtual-os-focus-layer">
+        <VirtualDesktop key={sessionNonce} initialApp={initialApp} />
+      </div>
+    </Html>
   )
 }
 
@@ -180,5 +183,5 @@ function UnifiedWallTerminal() {
 }
 
 export function ExhibitionScreens() {
-  return <UnifiedWallTerminal />
+  return <><UnifiedWallTerminal /><VisitorSystemFocusLayer /></>
 }
