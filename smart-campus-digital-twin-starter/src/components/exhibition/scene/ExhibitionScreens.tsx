@@ -1,4 +1,5 @@
 import { Html, RoundedBox, Text } from '@react-three/drei'
+import { createPortal } from 'react-dom'
 import {
   GalleryHorizontal,
   Globe2,
@@ -103,12 +104,11 @@ function VisitorSystemFocusLayer() {
   const sessionNonce = useExhibitionStore((state) => state.osSessionNonce)
   if (!osOpen) return null
 
-  return (
-    <Html fullscreen zIndexRange={[1200, 0]}>
-      <div className="virtual-os-focus-layer">
-        <VirtualDesktop key={sessionNonce} initialApp={initialApp} />
-      </div>
-    </Html>
+  return createPortal(
+    <div className="virtual-os-focus-layer">
+      <VirtualDesktop key={sessionNonce} initialApp={initialApp} />
+    </div>,
+    document.body,
   )
 }
 

@@ -4338,6 +4338,7 @@
 .virtual-os-focus-layer {
   position: fixed;
   inset: 0;
+  z-index: 10000;
   width: 100vw;
   height: 100vh;
   pointer-events: auto;
