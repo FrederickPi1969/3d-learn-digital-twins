@@ -105,27 +105,27 @@ export function ExhibitionHall() {
 
   return (
     <group>
-      <Environment resolution={256} environmentIntensity={0.84 * galleryLighting}>
-        <Lightformer form="rect" intensity={5.5} color="#ffffff" position={[0, 14, 0]} rotation-x={Math.PI / 2} scale={[24, 24, 1]} />
-        <Lightformer form="rect" intensity={2.8} color="#d9efff" position={[-18, 6, 4]} rotation-y={Math.PI / 2} scale={[11, 9, 1]} />
-        <Lightformer form="rect" intensity={2.8} color="#fff4e3" position={[18, 6, -4]} rotation-y={-Math.PI / 2} scale={[11, 9, 1]} />
-        <Lightformer form="ring" intensity={2.2} color="#b9ecff" position={[0, 7, -8]} scale={[8, 8, 1]} />
+      <Environment resolution={128} environmentIntensity={0.38 * galleryLighting}>
+        <Lightformer form="rect" intensity={2.2} color="#ffffff" position={[0, 14, 0]} rotation-x={Math.PI / 2} scale={[24, 24, 1]} />
+        <Lightformer form="rect" intensity={1.05} color="#d9efff" position={[-18, 6, 4]} rotation-y={Math.PI / 2} scale={[11, 9, 1]} />
+        <Lightformer form="rect" intensity={1.05} color="#fff4e3" position={[18, 6, -4]} rotation-y={-Math.PI / 2} scale={[11, 9, 1]} />
+        <Lightformer form="ring" intensity={0.75} color="#b9ecff" position={[0, 7, -8]} scale={[8, 8, 1]} />
       </Environment>
 
       <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.02, 0]}>
         <planeGeometry args={[54, 40]} />
         <MeshReflectorMaterial
-          resolution={768}
-          blur={[280, 86]}
-          mixBlur={0.72}
-          mixStrength={8.5}
-          roughness={0.46}
-          depthScale={0.52}
+          resolution={256}
+          blur={[120, 30]}
+          mixBlur={0.5}
+          mixStrength={1.35}
+          roughness={0.66}
+          depthScale={0.24}
           minDepthThreshold={0.42}
           maxDepthThreshold={1.35}
-          color="#e8ebed"
-          metalness={0.12}
-          mirror={0.18}
+          color="#bfc7cb"
+          metalness={0.04}
+          mirror={0.055}
         />
       </mesh>
 
@@ -221,7 +221,7 @@ export function ExhibitionHall() {
           <torusGeometry args={[2.72, 0.055, 12, 128]} />
           <meshBasicMaterial color="#62dff4" toneMapped={false} />
         </mesh>
-        <pointLight color="#dffaff" intensity={12 * galleryLighting} distance={18} decay={2} position={[0, -0.25, 0]} />
+        <pointLight color="#dffaff" intensity={4.2 * galleryLighting} distance={14} decay={2} position={[0, -0.25, 0]} />
       </group>
 
       {[-18.5, 18.5].map((x) => (

@@ -34,9 +34,9 @@ describe('useExhibitionStore', () => {
     expect(state.mediaScreenBrightness).toBe(1.35)
   })
   it('toggles the in-world animated media walls', () => {
-    expect(useExhibitionStore.getState().mediaScreensEnabled).toBe(true)
-    useExhibitionStore.getState().toggleMediaScreens()
     expect(useExhibitionStore.getState().mediaScreensEnabled).toBe(false)
+    useExhibitionStore.getState().toggleMediaScreens()
+    expect(useExhibitionStore.getState().mediaScreensEnabled).toBe(true)
   })
 
 })

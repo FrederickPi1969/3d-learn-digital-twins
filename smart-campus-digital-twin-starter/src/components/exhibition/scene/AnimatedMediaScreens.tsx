@@ -16,7 +16,7 @@ function createVideoTexture(src: string, poster?: string): ManagedVideoTexture {
   video.muted = true
   video.autoplay = true
   video.playsInline = true
-  video.preload = 'auto'
+  video.preload = 'metadata'
   video.crossOrigin = 'anonymous'
   if (poster) video.poster = poster
   video.setAttribute('aria-hidden', 'true')
@@ -33,7 +33,7 @@ function createVideoTexture(src: string, poster?: string): ManagedVideoTexture {
   texture.minFilter = THREE.LinearFilter
   texture.magFilter = THREE.LinearFilter
   texture.generateMipmaps = false
-  texture.anisotropy = 4
+  texture.anisotropy = 1
   texture.name = `exhibition-video:${src}`
   return { video, texture }
 }
@@ -80,8 +80,7 @@ interface AnimatedMediaScreenProps {
   position: Vector3Tuple
   rotation?: Euler | Vector3Tuple
   size: readonly [number, number]
-  src: string
-  poster: string
+  texture: THREE.VideoTexture
   title: string
   code: string
   lightColor: string
@@ -93,15 +92,13 @@ function AnimatedMediaScreen({
   position,
   rotation = [0, 0, 0],
   size,
-  src,
-  poster,
+  texture,
   title,
   code,
   lightColor,
   frameColor = '#f5f6f6',
   brightness,
 }: AnimatedMediaScreenProps) {
-  const texture = useManagedVideoTexture(src, poster)
   const [width, height] = size
   const brightnessColor = useMemo(
     () => new THREE.Color(brightness, brightness, brightness),
@@ -139,11 +136,10 @@ function AnimatedMediaScreen({
   )
 }
 
-export function AnimatedMediaScreens() {
-  const enabled = useExhibitionStore((state) => state.mediaScreensEnabled)
-  const brightness = useExhibitionStore((state) => state.mediaScreenBrightness)
-
-  if (!enabled) return null
+function MediaScreenContent({ brightness }: { brightness: number }) {
+  const aurora = useManagedVideoTexture('/media/exhibition/aurora-field.mp4', '/media/exhibition/aurora-field.jpg')
+  const matrix = useManagedVideoTexture('/media/exhibition/motion-matrix.mp4', '/media/exhibition/motion-matrix.jpg')
+  const chromatic = useManagedVideoTexture('/media/exhibition/chromatic-flux.mp4', '/media/exhibition/chromatic-flux.jpg')
 
   return (
     <>
@@ -151,8 +147,7 @@ export function AnimatedMediaScreens() {
         position={[-24.62, 4.25, -5.6]}
         rotation={[0, Math.PI / 2, 0]}
         size={[5.8, 3.28]}
-        src="/media/exhibition/aurora-field.mp4"
-        poster="/media/exhibition/aurora-field.jpg"
+        texture={aurora}
         title="Aurora Field"
         code="MEDIA WALL A-07"
         lightColor="#5bdcf2"
@@ -162,8 +157,7 @@ export function AnimatedMediaScreens() {
         position={[24.62, 4.25, 5.3]}
         rotation={[0, -Math.PI / 2, 0]}
         size={[5.8, 3.28]}
-        src="/media/exhibition/motion-matrix.mp4"
-        poster="/media/exhibition/motion-matrix.jpg"
+        texture={matrix}
         title="Motion Matrix"
         code="MEDIA WALL C-04"
         lightColor="#49bde8"
@@ -173,8 +167,7 @@ export function AnimatedMediaScreens() {
         position={[0, 6.48, 16.92]}
         rotation={[0, Math.PI, 0]}
         size={[8.8, 1.48]}
-        src="/media/exhibition/chromatic-flux.mp4"
-        poster="/media/exhibition/chromatic-flux.jpg"
+        texture={chromatic}
         title="Chromatic Flux / Now Showing"
         code="ENTRANCE MEDIA RIBBON"
         lightColor="#8d72f3"
@@ -184,8 +177,7 @@ export function AnimatedMediaScreens() {
         position={[0, 2.58, -0.26]}
         rotation={[0, Math.PI, 0]}
         size={[6.65, 3.25]}
-        src="/media/exhibition/aurora-field.mp4"
-        poster="/media/exhibition/aurora-field.jpg"
+        texture={aurora}
         title="Live Generative Archive"
         code="CENTRAL MEDIA 02"
         lightColor="#56d9d0"
@@ -193,4 +185,10 @@ export function AnimatedMediaScreens() {
       />
     </>
   )
+}
+
+export function AnimatedMediaScreens() {
+  const enabled = useExhibitionStore((state) => state.mediaScreensEnabled)
+  const brightness = useExhibitionStore((state) => state.mediaScreenBrightness)
+  return enabled ? <MediaScreenContent brightness={brightness} /> : null
 }

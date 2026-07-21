@@ -9,22 +9,24 @@ export function ExhibitionCanvas() {
     <Canvas
       className="exhibition-canvas"
       camera={{ position: [27, 18, 31], fov: 45, near: 0.08, far: 160 }}
-      dpr={[1, 1.75]}
+      dpr={[1, 1.35]}
       shadows="soft"
       gl={{
-        antialias: true,
+        // SMAA is applied once in the post-process pass. Native MSAA here
+        // duplicates that cost on high-density displays.
+        antialias: false,
         alpha: false,
         powerPreference: 'high-performance',
         stencil: false,
       }}
-      performance={{ min: 0.55 }}
+      performance={{ min: 0.7 }}
       onCreated={({ gl, scene }) => {
         gl.outputColorSpace = THREE.SRGBColorSpace
         gl.toneMapping = THREE.ACESFilmicToneMapping
-        gl.toneMappingExposure = 1.16
+        gl.toneMappingExposure = 0.86
         gl.shadowMap.enabled = true
         gl.shadowMap.type = THREE.PCFSoftShadowMap
-        scene.background = new THREE.Color('#f0f4f6')
+        scene.background = new THREE.Color('#cfd7dc')
       }}
     >
       <AdaptiveDpr pixelated />

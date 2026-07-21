@@ -13,18 +13,18 @@ export function ExhibitionEffects() {
   const bloomIntensity = useExhibitionStore((state) => state.bloomIntensity)
 
   return (
-    <EffectComposer multisampling={4}>
+    <EffectComposer multisampling={0}>
       <SMAA />
       <Bloom
         mipmapBlur
-        intensity={bloomIntensity * 0.72}
-        luminanceThreshold={0.78}
-        luminanceSmoothing={0.24}
+        intensity={bloomIntensity * 0.42}
+        luminanceThreshold={1.02}
+        luminanceSmoothing={0.16}
       />
-      <BrightnessContrast brightness={0.028} contrast={0.018} />
-      <HueSaturation saturation={0.018} hue={-0.003} />
-      <Noise opacity={0.0035} />
-      <Vignette eskil={false} offset={0.12} darkness={0.075} />
+      <BrightnessContrast brightness={-0.035} contrast={0.045} />
+      <HueSaturation saturation={0.012} hue={-0.003} />
+      <Noise opacity={0.0015} />
+      <Vignette eskil={false} offset={0.14} darkness={0.05} />
     </EffectComposer>
   )
 }

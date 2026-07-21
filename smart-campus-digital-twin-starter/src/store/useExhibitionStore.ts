@@ -57,11 +57,13 @@ const initialState = {
   osInitialApp: null,
   osSessionNonce: 0,
   floorPlanOpen: false,
-  ambientVisitors: 14,
-  galleryLighting: 0.88,
-  bloomIntensity: 0.72,
-  mediaScreensEnabled: true,
-  mediaScreenBrightness: 0.9,
+  ambientVisitors: 8,
+  galleryLighting: 0.76,
+  bloomIntensity: 0.38,
+  // Videos are the heaviest runtime asset. Visitors can enable the media wall
+  // from the control dock once the scene is interactive.
+  mediaScreensEnabled: false,
+  mediaScreenBrightness: 0.72,
 }
 
 export const useExhibitionStore = create<ExhibitionState>()((set) => ({

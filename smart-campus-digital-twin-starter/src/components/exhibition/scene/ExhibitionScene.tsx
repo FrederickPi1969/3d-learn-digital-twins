@@ -36,7 +36,7 @@ export function ExhibitionScene() {
         scale={52}
         blur={3.4}
         far={18}
-        resolution={768}
+        resolution={384}
         frames={1}
         color="#647078"
       />
