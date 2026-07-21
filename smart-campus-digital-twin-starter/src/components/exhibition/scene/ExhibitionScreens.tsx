@@ -13,7 +13,13 @@ import { useExhibitionStore } from '@/store/useExhibitionStore'
 
 const WALL_SCREEN_PIXEL_WIDTH = 1366
 const WALL_SCREEN_PIXEL_HEIGHT = 768
-const WALL_SCREEN_WORLD_SCALE = 0.00955
+// Match the Html desktop to the visible 14.67 × 8.18 world-unit screen plane.
+// A scalar left unused border on every side and made the OS look detached.
+const WALL_SCREEN_WORLD_SCALE: [number, number, number] = [
+  14.67 / WALL_SCREEN_PIXEL_WIDTH,
+  8.18 / WALL_SCREEN_PIXEL_HEIGHT,
+  1,
+]
 
 function WallNavigationDashboard() {
   const setFloorPlanOpen = useExhibitionStore((state) => state.setFloorPlanOpen)

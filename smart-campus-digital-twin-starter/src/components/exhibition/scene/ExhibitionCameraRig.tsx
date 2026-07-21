@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { CameraControls } from '@react-three/drei'
+import { useFrame } from '@react-three/fiber'
 import type CameraControlsImpl from 'camera-controls'
 import * as THREE from 'three'
 import { getExhibitById } from '@/data/exhibition'
@@ -27,6 +28,7 @@ const PRESETS = {
 
 export function ExhibitionCameraRig() {
   const controlsRef = useRef<CameraControlsImpl>(null)
+  const heldKeysRef = useRef(new Set<string>())
   const cameraPreset = useExhibitionStore((state) => state.cameraPreset)
   const cameraRequestNonce = useExhibitionStore((state) => state.cameraRequestNonce)
   const selectedExhibitId = useExhibitionStore((state) => state.selectedExhibitId)
@@ -81,6 +83,41 @@ export function ExhibitionCameraRig() {
       true,
     )
   }, [cameraPreset, cameraRequestNonce, selectedExhibitId])
+
+  useEffect(() => {
+    const isTypingTarget = (target: EventTarget | null) =>
+      target instanceof HTMLInputElement ||
+      target instanceof HTMLTextAreaElement ||
+      target instanceof HTMLSelectElement ||
+      (target instanceof HTMLElement && target.isContentEditable)
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (isTypingTarget(event.target)) return
+      if (!['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ShiftLeft', 'ShiftRight'].includes(event.code)) return
+      event.preventDefault()
+      heldKeysRef.current.add(event.code)
+    }
+    const onKeyUp = (event: KeyboardEvent) => heldKeysRef.current.delete(event.code)
+    const clearKeys = () => heldKeysRef.current.clear()
+    window.addEventListener('keydown', onKeyDown)
+    window.addEventListener('keyup', onKeyUp)
+    window.addEventListener('blur', clearKeys)
+    return () => {
+      window.removeEventListener('keydown', onKeyDown)
+      window.removeEventListener('keyup', onKeyUp)
+      window.removeEventListener('blur', clearKeys)
+    }
+  }, [])
+
+  useFrame((_, delta) => {
+    const controls = controlsRef.current
+    if (!controls) return
+    const held = heldKeysRef.current
+    const speed = (held.has('ShiftLeft') || held.has('ShiftRight') ? 11 : 4.8) * Math.min(delta, 0.05)
+    const forward = (held.has('KeyW') ? 1 : 0) - (held.has('KeyS') ? 1 : 0)
+    const strafe = (held.has('KeyD') ? 1 : 0) - (held.has('KeyA') ? 1 : 0)
+    if (forward) void controls.forward(forward * speed, false)
+    if (strafe) void controls.truck(strafe * speed, 0, false)
+  })
 
   return (
     <CameraControls

@@ -141,6 +141,7 @@ export function ExhibitionHud() {
       <div className="exhibition-interaction-hint">
         <span>拖动旋转</span><i />
         <span>滚轮缩放</span><i />
+        <span>WASD 移动 · Shift 加速</span><i />
         <span>点击展品聚焦</span><i />
         <span>墙面大屏内运行访客系统</span>
       </div>
@@ -151,7 +152,7 @@ export function ExhibitionHud() {
       <FloorPlanOverlay />
 
       <div className="exhibition-keyboard-hint">
-        <kbd>1</kbd> 总览 <kbd>2</kbd> 大屏 <kbd>3</kbd> 交互墙 <kbd>M</kbd> 地图 <kbd>O</kbd> 系统 <kbd>ESC</kbd> 关闭
+        <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> 移动 <kbd>⇧</kbd> 加速 <kbd>1</kbd> 总览 <kbd>2</kbd> 大屏 <kbd>3</kbd> 交互墙 <kbd>M</kbd> 地图 <kbd>O</kbd> 系统 <kbd>ESC</kbd> 关闭
       </div>
     </div>
   )
