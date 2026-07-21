@@ -1,5 +1,17 @@
 # Change Log
 
+## 4.0.0 — White Future Gallery, Embedded Wall OS and Motion Media
+
+Reworked the exhibition environment into a high-key futuristic white gallery. The physical redesign coordinates resin-like floor reflections, white physical wall materials, skylights, black track fixtures, warm-white exhibit lighting, light cyan guidance lines, brighter fog, higher exposure and a reduced vignette. The surrounding Heads-Up Display now uses a white-glass presentation so interface chrome does not darken the room.
+
+Replaced the detached visitor terminal with one architectural wall assembly. The complete React desktop, draggable windows, browser and domain applications run directly on the Three.js wall surface through Drei `Html transform`. Closing the visitor session restores the live floor-map dashboard on the same 1366 × 768 screen. Camera preset 3 and the `O` shortcut focus this in-world terminal; no separate full-window operating-system overlay is mounted.
+
+Added four controllable world-space media displays: two side-wall screens, an entrance media ribbon and the reverse face of the central wall. The implementation uses local H.264 media, managed `THREE.VideoTexture` instances, poster fallback, muted-autoplay recovery, page-visibility pause/resume, explicit disposal and brightness-linked light spill. Media can be disabled from the exhibition dock and configured from the embedded Settings application.
+
+Expanded the bundled catalog to eighteen local GLB files: sixteen reproducibly generated project-owned demonstration assets plus two small CC0 learning samples. Added a six-provider asset registry and a build-time manifest synchronizer supporting local and HTTP(S) sources, a 100-megabyte file limit, binary glTF header checks, optional SHA-256 verification, atomic writes and normalized provenance metadata.
+
+Expanded automated coverage for media controls and the asset registry. Release validation now checks the white-gallery style markers, embedded wall operating system, all eighteen GLB models, all video and poster files, Cesium runtime roots, browser pages, Draco decoder, environment map and asynchronous exhibition bundle.
+
 ## 3.0.0 — Future Exhibition Hall and Visitor Operating System
 
 This release adds an independently loadable futuristic exhibition experience to the existing smart-campus, environment, night-rendering and Cesium GIS suite.

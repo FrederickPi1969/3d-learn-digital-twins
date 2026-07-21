@@ -1,6 +1,6 @@
 # Third-party software and demo asset notices
 
-This repository combines open-source software and replaceable learning-purpose demo assets. Review all licenses again before redistributing a commercial derivative.
+This repository combines open-source software and replaceable learning-purpose demo assets. Review every license again before redistributing a commercial derivative.
 
 ## Runtime libraries
 
@@ -25,8 +25,12 @@ The authoritative license text for installed packages is located in each package
 
 `public/models/exhibition/stanford-bunny.glb`, `public/models/exhibition/suzanne.glb`, and `public/environments/night-gallery.exr` were copied from `@pmndrs/assets` version 1.7.0. That package declares the CC0-1.0 license. They are included as small, replaceable examples for model loading, Draco decoding and image-based lighting.
 
-The PNG files under `public/artworks/` were generated specifically as concept-art content for this starter. They are not required by the rendering architecture and may be replaced with user-owned imagery.
+The sixteen GLB files under `public/models/exhibition/curated-demo/` were procedurally generated for this codebase by `scripts/generate-curated-demo-assets.py`. Their normalized metadata and byte sizes are recorded in the adjacent manifest. They are released with the project as CC0-1.0 learning assets.
+
+The PNG files under `public/artworks/` and the MP4/JPEG media under `public/media/exhibition/` were generated specifically for this starter. The media generation source is included in `scripts/generate-exhibition-media.py`. These files are not required by the rendering architecture and may be replaced with user-owned imagery and video.
 
 The Draco decoder files under `public/draco/` originate from the Three.js example decoder distribution. Three.js is licensed under MIT. Retain the applicable notices when redistributing those files.
 
-No production museum collection, copyrighted catalog, proprietary Windows assets, Chrome binaries or Microsoft/Google brand logos are bundled. The virtual desktop and browser are generic interface simulations implemented in React.
+The asset-provider registry names public catalogs as optional integration channels, but no remote catalog model is bundled merely because the provider is listed. Any synchronized model must retain its own license, author credit and source metadata.
+
+No production museum collection, proprietary Windows assets, Chrome binaries or Microsoft/Google brand logos are bundled. The virtual desktop and browser are brand-neutral interface simulations implemented in React and rendered directly inside a Three.js exhibition-wall screen.

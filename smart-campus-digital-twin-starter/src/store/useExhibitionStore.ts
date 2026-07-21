@@ -21,6 +21,8 @@ interface ExhibitionState {
   ambientVisitors: number
   galleryLighting: number
   bloomIntensity: number
+  mediaScreensEnabled: boolean
+  mediaScreenBrightness: number
 
   selectExhibit: (id: string | null, focus?: boolean) => void
   setHoveredExhibit: (id: string | null) => void
@@ -35,6 +37,8 @@ interface ExhibitionState {
   setAmbientVisitors: (count: number) => void
   setGalleryLighting: (value: number) => void
   setBloomIntensity: (value: number) => void
+  toggleMediaScreens: () => void
+  setMediaScreenBrightness: (value: number) => void
   resetExhibition: () => void
 }
 
@@ -55,7 +59,9 @@ const initialState = {
   floorPlanOpen: false,
   ambientVisitors: 14,
   galleryLighting: 0.88,
-  bloomIntensity: 0.82,
+  bloomIntensity: 0.72,
+  mediaScreensEnabled: true,
+  mediaScreenBrightness: 0.9,
 }
 
 export const useExhibitionStore = create<ExhibitionState>()((set) => ({
@@ -79,6 +85,8 @@ export const useExhibitionStore = create<ExhibitionState>()((set) => ({
       osInitialApp: initialApp,
       osSessionNonce: state.osSessionNonce + 1,
       floorPlanOpen: false,
+      cameraPreset: 'kiosk',
+      cameraRequestNonce: state.cameraRequestNonce + 1,
     })),
   closeOs: () => set({ osOpen: false, osInitialApp: null }),
   setFloorPlanOpen: (open) =>
@@ -86,6 +94,8 @@ export const useExhibitionStore = create<ExhibitionState>()((set) => ({
   setAmbientVisitors: (count) => set({ ambientVisitors: Math.round(clamp(count, 0, 28)) }),
   setGalleryLighting: (value) => set({ galleryLighting: clamp(value, 0.35, 1.25) }),
   setBloomIntensity: (value) => set({ bloomIntensity: clamp(value, 0, 1.6) }),
+  toggleMediaScreens: () => set((state) => ({ mediaScreensEnabled: !state.mediaScreensEnabled })),
+  setMediaScreenBrightness: (value) => set({ mediaScreenBrightness: clamp(value, 0.25, 1.35) }),
   resetExhibition: () =>
     set((state) => ({
       ...initialState,

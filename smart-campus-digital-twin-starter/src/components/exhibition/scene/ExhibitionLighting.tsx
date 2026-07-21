@@ -1,10 +1,10 @@
-import { Sparkles } from '@react-three/drei'
 import { useExhibitionStore } from '@/store/useExhibitionStore'
 
 const trackLights = [
-  [-16, -10], [-8, -10], [8, -10], [16, -10],
-  [-16, 0], [-8, 0], [8, 0], [16, 0],
-  [-16, 10], [-8, 10], [8, 10], [16, 10],
+  [-20, -12.7], [-14, -12.7], [-8, -12.7], [8, -12.7], [14, -12.7], [20, -12.7],
+  [-20, -5], [-12, -5], [-4, -5], [4, -5], [12, -5], [20, -5],
+  [-20, 5], [-12, 5], [-4, 5], [4, 5], [12, 5], [20, 5],
+  [-20, 12.7], [-14, 12.7], [-8, 12.7], [8, 12.7], [14, 12.7], [20, 12.7],
 ] as const
 
 export function ExhibitionLighting() {
@@ -12,57 +12,56 @@ export function ExhibitionLighting() {
 
   return (
     <>
-      <ambientLight intensity={0.46 * galleryLighting} color="#8eb7d8" />
-      <hemisphereLight intensity={0.72 * galleryLighting} color="#bfe7ff" groundColor="#05070d" />
+      <ambientLight intensity={0.92 * galleryLighting} color="#f2f6f8" />
+      <hemisphereLight intensity={1.16 * galleryLighting} color="#e8f5ff" groundColor="#9ca4a8" />
       <directionalLight
         castShadow
-        position={[9, 17, 12]}
-        color="#ccecff"
-        intensity={1.5 * galleryLighting}
+        position={[-11, 19, 8]}
+        color="#fff7ea"
+        intensity={2.35 * galleryLighting}
         shadow-mapSize-width={2048}
         shadow-mapSize-height={2048}
-        shadow-camera-left={-30}
-        shadow-camera-right={30}
-        shadow-camera-top={24}
-        shadow-camera-bottom={-24}
+        shadow-camera-left={-31}
+        shadow-camera-right={31}
+        shadow-camera-top={25}
+        shadow-camera-bottom={-25}
         shadow-camera-near={1}
-        shadow-camera-far={58}
-        shadow-bias={-0.00018}
+        shadow-camera-far={62}
+        shadow-bias={-0.00014}
+        shadow-normalBias={0.025}
       />
+      <directionalLight position={[14, 13, -10]} color="#d9efff" intensity={0.72 * galleryLighting} />
 
       {trackLights.map(([x, z], index) => (
-        <group key={`${x}-${z}`} position={[x, 7.55, z]}>
-          <mesh>
-            <cylinderGeometry args={[0.16, 0.24, 0.42, 18]} />
-            <meshStandardMaterial color="#101a27" metalness={0.82} roughness={0.25} />
+        <group key={`${x}-${z}`} position={[x, 7.43, z]}>
+          <mesh rotation={[0, 0, index % 2 === 0 ? 0.18 : -0.18]} castShadow>
+            <cylinderGeometry args={[0.14, 0.22, 0.48, 18]} />
+            <meshStandardMaterial color="#161b20" metalness={0.78} roughness={0.23} />
+          </mesh>
+          <mesh position={[0, -0.25, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+            <circleGeometry args={[0.135, 18]} />
+            <meshBasicMaterial color={index % 5 === 0 ? '#c8f3ff' : '#fff9ee'} toneMapped={false} />
           </mesh>
           <spotLight
             position={[0, -0.18, 0]}
-            target-position={[x * 0.86, 0, z * 0.9]}
-            color={index % 4 === 0 ? '#75dfff' : '#dceeff'}
-            intensity={(index % 4 === 0 ? 8.5 : 6.5) * galleryLighting}
-            distance={13}
-            angle={0.4}
-            penumbra={0.76}
+            target-position={[x * 0.92, 0.4, z * 0.92]}
+            color={index % 5 === 0 ? '#d8f6ff' : '#fff8ed'}
+            intensity={(index % 5 === 0 ? 6.8 : 5.5) * galleryLighting}
+            distance={12.5}
+            angle={0.36}
+            penumbra={0.78}
             decay={2}
           />
         </group>
       ))}
 
-      <pointLight position={[-22, 4.5, -14]} color="#348eff" intensity={9 * galleryLighting} distance={12} decay={2} />
-      <pointLight position={[22, 4.5, -14]} color="#6c49ff" intensity={9 * galleryLighting} distance={12} decay={2} />
-      <pointLight position={[-22, 3.5, 14]} color="#f0b75f" intensity={6.5 * galleryLighting} distance={10} decay={2} />
-      <pointLight position={[22, 3.5, 14]} color="#39e6b2" intensity={6.5 * galleryLighting} distance={10} decay={2} />
+      <rectAreaLight position={[-9.3, 7.78, -5.15]} rotation={[-Math.PI / 2, 0, 0]} width={7.2} height={8.8} color="#d8efff" intensity={2.8 * galleryLighting} />
+      <rectAreaLight position={[9.3, 7.78, 5.15]} rotation={[-Math.PI / 2, 0, 0]} width={7.2} height={8.8} color="#fff5e5" intensity={2.5 * galleryLighting} />
 
-      <Sparkles
-        count={74}
-        scale={[46, 8, 32]}
-        position={[0, 4.2, 0]}
-        size={0.72}
-        speed={0.08}
-        opacity={0.16}
-        color="#c8f6ff"
-      />
+      <pointLight position={[-22, 3.8, -14]} color="#a9e8f4" intensity={3.4 * galleryLighting} distance={10} decay={2} />
+      <pointLight position={[22, 3.8, -14]} color="#c5ddff" intensity={3.2 * galleryLighting} distance={10} decay={2} />
+      <pointLight position={[-22, 3.2, 14]} color="#ffe5bd" intensity={2.6 * galleryLighting} distance={9} decay={2} />
+      <pointLight position={[22, 3.2, 14]} color="#c8f5ec" intensity={2.6 * galleryLighting} distance={9} decay={2} />
     </>
   )
 }

@@ -7,6 +7,7 @@ import type {
   ExhibitionZone,
   ExhibitionZoneConfig,
 } from '@/types/exhibition'
+import { getIncludedExhibitionAsset } from './exhibitionAssets'
 
 export const EXHIBITION_HALL = {
   width: 50,
@@ -15,7 +16,7 @@ export const EXHIBITION_HALL = {
   boothCount: 48,
   entranceZ: 17.2,
   bigScreenPosition: [0, 4.65, -17.48] as const,
-  kioskPosition: [0, 0, 11.9] as const,
+  kioskPosition: [0, 4.3, -16.64] as const,
 } as const
 
 export const exhibitionZones: readonly ExhibitionZoneConfig[] = [
@@ -79,8 +80,31 @@ const categoryFor = (index: number, zone: ExhibitionZone): ExhibitCategory => {
   return index % 2 === 0 ? 'hologram' : 'generative'
 }
 
-const kindFor = (index: number, zone: ExhibitionZone): ExhibitDisplayKind => {
-  if (index === 13 || index === 15 || index === 25 || index === 27) return 'imported-model'
+const importedAssetByBooth = new Map<number, string>([
+  [13, 'data-monolith'],
+  [14, 'stanford-bunny'],
+  [15, 'mechanical-flower'],
+  [16, 'suzanne'],
+  [17, 'resonance-arch'],
+  [18, 'faceted-bust'],
+  [19, 'nebula-lens'],
+  [20, 'orbital-rings'],
+  [21, 'folded-ribbon'],
+  [22, 'crystal-cluster'],
+  [23, 'guardian-figure'],
+  [24, 'spiral-column'],
+  [25, 'solar-orrery'],
+  [26, 'amphora-vessel'],
+  [27, 'porcelain-lotus'],
+  [28, 'abstract-mask'],
+  [30, 'robot-totem'],
+  [32, 'wave-surface'],
+  [34, 'faceted-bust'],
+  [36, 'amphora-vessel'],
+])
+
+const kindFor = (boothNumber: number, zone: ExhibitionZone): ExhibitDisplayKind => {
+  if (importedAssetByBooth.has(boothNumber)) return 'imported-model'
   if (zone === 'A') return 'painting'
   if (zone === 'B') return 'procedural-sculpture'
   if (zone === 'C') return 'relic'
@@ -88,6 +112,20 @@ const kindFor = (index: number, zone: ExhibitionZone): ExhibitDisplayKind => {
 }
 
 const wallXs = [-20, -17, -14, -11, -8, -5, 5, 8, 11, 14, 17, 20] as const
+const northWallPlacements = [
+  { position: [-21, 0, -14.9] as const, rotationY: 0 },
+  { position: [-17.8, 0, -14.9] as const, rotationY: 0 },
+  { position: [-14.6, 0, -14.9] as const, rotationY: 0 },
+  { position: [-11.4, 0, -14.9] as const, rotationY: 0 },
+  { position: [-16, 0, -10.2] as const, rotationY: Math.PI / 2 },
+  { position: [-16, 0, -6.5] as const, rotationY: Math.PI / 2 },
+  { position: [16, 0, -6.5] as const, rotationY: -Math.PI / 2 },
+  { position: [16, 0, -10.2] as const, rotationY: -Math.PI / 2 },
+  { position: [11.4, 0, -14.9] as const, rotationY: 0 },
+  { position: [14.6, 0, -14.9] as const, rotationY: 0 },
+  { position: [17.8, 0, -14.9] as const, rotationY: 0 },
+  { position: [21, 0, -14.9] as const, rotationY: 0 },
+] as const
 const sideZs = [-12.5, -8.2, -3.9, 3.9, 8.2, 12.5] as const
 const centerXs = [-13.2, -4.4, 4.4, 13.2] as const
 const centerZs = [-7.2, 0, 7.2] as const
@@ -99,19 +137,15 @@ function makeExhibit(
   rotationY: number,
 ): ExhibitConfig {
   const index = boothNumber - 1
-  const displayKind = kindFor(index, zone)
+  const displayKind = kindFor(boothNumber, zone)
   const imageUrl =
     boothNumber === 1
       ? '/artworks/digital-twin-gallery.png'
       : boothNumber === 2
         ? '/artworks/interactive-kiosk-study.png'
         : undefined
-  const modelUrl =
-    displayKind === 'imported-model'
-      ? boothNumber % 2 === 0
-        ? '/models/exhibition/stanford-bunny.glb'
-        : '/models/exhibition/suzanne.glb'
-      : undefined
+  const modelAssetId = importedAssetByBooth.get(boothNumber)
+  const modelAsset = modelAssetId ? getIncludedExhibitionAsset(modelAssetId) : undefined
 
   return {
     id: `exhibit-${String(boothNumber).padStart(2, '0')}`,
@@ -128,12 +162,20 @@ function makeExhibit(
     rotationY,
     accent: accents[index % accents.length],
     description: `${titles[index]}通过空间、材质与实时计算建立一套可被观察和交互的叙事。该展项在本项目中同时承担展品渲染、定位导航、设备联动和数字档案示例。`,
-    modelUrl,
+    modelUrl: modelAsset?.url,
+    modelTargetHeight: modelAssetId === 'wave-surface' ? 1.42 : modelAssetId === 'spiral-column' ? 1.92 : 1.72,
+    preserveModelMaterials: modelAsset?.preserveMaterials,
+    assetProvider: modelAsset?.provider,
+    assetSource: modelAsset?.sourceLabel,
+    assetLicense: modelAsset?.license,
+    assetCredit: modelAsset?.credit,
     imageUrl,
   }
 }
 
-const north = wallXs.map((x, index) => makeExhibit(index + 1, 'A', [x, 0, -14.9], 0))
+const north = northWallPlacements.map((placement, index) =>
+  makeExhibit(index + 1, 'A', placement.position, placement.rotationY),
+)
 const south = wallXs.map((x, index) => makeExhibit(index + 13, 'B', [x, 0, 14.7], Math.PI))
 const west = sideZs.map((z, index) => makeExhibit(index + 25, 'C', [-22.8, 0, z], -Math.PI / 2))
 const east = sideZs.map((z, index) => makeExhibit(index + 31, 'C', [22.8, 0, z], Math.PI / 2))

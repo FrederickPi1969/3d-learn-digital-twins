@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Html, Image, Sparkles, Text, useCursor, useGLTF } from '@react-three/drei'
+import { Html, Image, Sparkles, Text, useAnimations, useCursor, useGLTF } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import type { Group, Mesh } from 'three'
+import { includedExhibitionAssets } from '@/data/exhibitionAssets'
 import { useExhibitionStore } from '@/store/useExhibitionStore'
 import type { ExhibitConfig } from '@/types/exhibition'
 
@@ -18,9 +19,9 @@ function createGenerativeArtTexture(exhibit: ExhibitConfig) {
   if (!context) return new THREE.CanvasTexture(canvas)
 
   const background = context.createLinearGradient(0, 0, canvas.width, canvas.height)
-  background.addColorStop(0, '#020713')
-  background.addColorStop(0.55, '#071b35')
-  background.addColorStop(1, '#03040b')
+  background.addColorStop(0, '#04101d')
+  background.addColorStop(0.55, '#0a2b4a')
+  background.addColorStop(1, '#060812')
   context.fillStyle = background
   context.fillRect(0, 0, canvas.width, canvas.height)
 
@@ -62,11 +63,11 @@ function createGenerativeArtTexture(exhibit: ExhibitConfig) {
     context.stroke()
   }
 
-  context.fillStyle = 'rgba(219,249,255,0.88)'
+  context.fillStyle = 'rgba(226,250,255,0.92)'
   context.font = '600 22px Inter, sans-serif'
   context.letterSpacing = '4px'
   context.fillText(`NO.${String(exhibit.boothNumber).padStart(2, '0')}`, 34, 43)
-  context.fillStyle = 'rgba(113,190,219,0.72)'
+  context.fillStyle = 'rgba(134,205,229,0.78)'
   context.font = '500 13px Inter, sans-serif'
   context.fillText('GENERATIVE FIELD STUDY', 34, 67)
 
@@ -80,48 +81,51 @@ function createGenerativeArtTexture(exhibit: ExhibitConfig) {
 
 function ProceduralPainting({ exhibit }: { exhibit: ExhibitConfig }) {
   const texture = useMemo(() => createGenerativeArtTexture(exhibit), [exhibit])
-
   useEffect(() => () => texture.dispose(), [texture])
 
   return (
-    <mesh position={[0, 2.28, 0.09]}>
+    <mesh position={[0, 2.28, 0.1]}>
       <planeGeometry args={[2.72, 1.78]} />
       <meshStandardMaterial
         map={texture}
         emissive="#ffffff"
         emissiveMap={texture}
-        emissiveIntensity={0.52}
-        roughness={0.42}
-        metalness={0.08}
+        emissiveIntensity={0.38}
+        roughness={0.39}
+        metalness={0.04}
       />
     </mesh>
   )
 }
 
 function ImagePainting({ url }: { url: string }) {
-  return <Image url={url} position={[0, 2.28, 0.09]} scale={[2.72, 1.78]} toneMapped={false} />
+  return <Image url={url} position={[0, 2.28, 0.1]} scale={[2.72, 1.78]} toneMapped={false} />
 }
 
 function PaintingDisplay({ exhibit }: { exhibit: ExhibitConfig }) {
   return (
     <group>
-      <mesh position={[0, 2.28, 0]} castShadow>
-        <boxGeometry args={[3.05, 2.1, 0.18]} />
-        <meshStandardMaterial color="#121b29" roughness={0.24} metalness={0.86} />
+      <mesh position={[0, 2.28, -0.015]} castShadow>
+        <boxGeometry args={[3.14, 2.2, 0.19]} />
+        <meshPhysicalMaterial color="#f7f7f5" roughness={0.35} metalness={0.04} clearcoat={0.34} />
       </mesh>
-      <mesh position={[0, 2.28, 0.101]}>
-        <boxGeometry args={[2.84, 1.9, 0.025]} />
+      <mesh position={[0, 2.28, 0.09]}>
+        <boxGeometry args={[2.89, 1.95, 0.035]} />
+        <meshStandardMaterial color="#252d33" roughness={0.22} metalness={0.62} />
+      </mesh>
+      <mesh position={[0, 1.22, 0.095]}>
+        <boxGeometry args={[1.65, 0.025, 0.035]} />
         <meshBasicMaterial color={exhibit.accent} toneMapped={false} />
       </mesh>
       {exhibit.imageUrl ? <ImagePainting url={exhibit.imageUrl} /> : <ProceduralPainting exhibit={exhibit} />}
       <spotLight
-        position={[0, 5.3, 2.5]}
+        position={[0, 5.35, 2.25]}
         target-position={[0, 2.1, 0]}
-        color="#c4efff"
-        intensity={11}
+        color="#fff7eb"
+        intensity={7.8}
         distance={8}
         angle={0.34}
-        penumbra={0.8}
+        penumbra={0.82}
         decay={2}
       />
     </group>
@@ -142,13 +146,13 @@ function KineticSculpture({ exhibit }: { exhibit: ExhibitConfig }) {
 
   const material = (
     <meshPhysicalMaterial
-      color={exhibit.accent}
+      color={new THREE.Color(exhibit.accent).lerp(new THREE.Color('#f5f5f2'), 0.22)}
       emissive={exhibit.accent}
-      emissiveIntensity={0.16}
-      roughness={0.18 + (exhibit.variant % 3) * 0.08}
-      metalness={0.82}
+      emissiveIntensity={0.08}
+      roughness={0.17 + (exhibit.variant % 3) * 0.08}
+      metalness={0.78}
       clearcoat={1}
-      clearcoatRoughness={0.18}
+      clearcoatRoughness={0.17}
     />
   )
 
@@ -189,7 +193,7 @@ function KineticSculpture({ exhibit }: { exhibit: ExhibitConfig }) {
           </mesh>
           <mesh scale={1.22}>
             <icosahedronGeometry args={[0.9, 1]} />
-            <meshBasicMaterial color={exhibit.accent} wireframe transparent opacity={0.32} toneMapped={false} />
+            <meshBasicMaterial color={exhibit.accent} wireframe transparent opacity={0.24} toneMapped={false} />
           </mesh>
         </group>
       )}
@@ -197,42 +201,85 @@ function KineticSculpture({ exhibit }: { exhibit: ExhibitConfig }) {
   )
 }
 
+function cloneMaterial(material: THREE.Material): THREE.Material {
+  const clone = material.clone()
+  if (clone instanceof THREE.MeshStandardMaterial) {
+    clone.envMapIntensity = 1.18
+    clone.roughness = Math.max(0.12, clone.roughness)
+  }
+  clone.needsUpdate = true
+  return clone
+}
+
 function ImportedModel({ exhibit }: { exhibit: ExhibitConfig }) {
   const model = useGLTF(exhibit.modelUrl ?? '/models/exhibition/stanford-bunny.glb', '/draco/')
   const clone = useMemo(() => model.scene.clone(true), [model.scene])
   const groupRef = useRef<Group>(null)
+  const { actions } = useAnimations(model.animations, clone)
+
+  const normalization = useMemo(() => {
+    clone.updateMatrixWorld(true)
+    const box = new THREE.Box3().setFromObject(clone)
+    const size = box.getSize(new THREE.Vector3())
+    const center = box.getCenter(new THREE.Vector3())
+    const targetHeight = exhibit.modelTargetHeight ?? 1.72
+    const scale = targetHeight / Math.max(size.y, 0.001)
+    return {
+      scale,
+      position: [-center.x * scale, 0.61 - box.min.y * scale, -center.z * scale] as const,
+    }
+  }, [clone, exhibit.modelTargetHeight])
 
   useEffect(() => {
+    const disposableMaterials: THREE.Material[] = []
     clone.traverse((object) => {
       if (!(object instanceof THREE.Mesh)) return
       object.castShadow = true
       object.receiveShadow = true
-      object.material = new THREE.MeshPhysicalMaterial({
-        color: new THREE.Color(exhibit.accent).lerp(new THREE.Color('#ffffff'), 0.42),
-        metalness: 0.42,
-        roughness: 0.22,
-        clearcoat: 1,
-        clearcoatRoughness: 0.16,
-        emissive: new THREE.Color(exhibit.accent),
-        emissiveIntensity: 0.07,
-      })
-    })
-    return () => {
-      clone.traverse((object) => {
-        if (object instanceof THREE.Mesh && object.material instanceof THREE.Material) {
-          object.material.dispose()
+      if (exhibit.preserveModelMaterials) {
+        if (Array.isArray(object.material)) {
+          const materials = object.material.map((source) => cloneMaterial(source))
+          object.material = materials
+          disposableMaterials.push(...materials)
+        } else {
+          const material = cloneMaterial(object.material)
+          object.material = material
+          disposableMaterials.push(material)
         }
-      })
+      } else {
+        const material = new THREE.MeshPhysicalMaterial({
+          color: new THREE.Color(exhibit.accent).lerp(new THREE.Color('#f8f8f5'), 0.52),
+          metalness: 0.36,
+          roughness: 0.2,
+          clearcoat: 1,
+          clearcoatRoughness: 0.14,
+          emissive: new THREE.Color(exhibit.accent),
+          emissiveIntensity: 0.035,
+        })
+        object.material = material
+        disposableMaterials.push(material)
+      }
+    })
+    return () => disposableMaterials.forEach((material) => material.dispose())
+  }, [clone, exhibit.accent, exhibit.preserveModelMaterials])
+
+  useEffect(() => {
+    const activeActions = Object.values(actions).filter((action): action is THREE.AnimationAction => Boolean(action))
+    activeActions.forEach((action) => action.reset().fadeIn(0.25).play())
+    return () => {
+      activeActions.forEach((action) => action.fadeOut(0.15).stop())
     }
-  }, [clone, exhibit.accent])
+  }, [actions])
 
   useFrame((_, delta) => {
-    if (groupRef.current) groupRef.current.rotation.y += delta * 0.16
+    if (groupRef.current) groupRef.current.rotation.y += delta * 0.105
   })
 
   return (
-    <group ref={groupRef} position={[0, 1.04, 0]} scale={exhibit.modelUrl?.includes('suzanne') ? 0.78 : 1.08}>
-      <primitive object={clone} />
+    <group ref={groupRef} rotation={exhibit.modelRotation ?? [0, 0, 0]}>
+      <group position={normalization.position} scale={normalization.scale}>
+        <primitive object={clone} />
+      </group>
     </group>
   )
 }
@@ -257,28 +304,28 @@ function RelicDisplay({ exhibit }: { exhibit: ExhibitConfig }) {
       <mesh position={[0, 1.05, 0]} castShadow>
         <latheGeometry args={[points, 48]} />
         <meshPhysicalMaterial
-          color={exhibit.variant % 2 === 0 ? '#caa46c' : '#6e91a5'}
-          roughness={0.34}
-          metalness={exhibit.variant % 2 === 0 ? 0.62 : 0.22}
-          clearcoat={0.6}
+          color={exhibit.variant % 2 === 0 ? '#bf8d55' : '#7898aa'}
+          roughness={0.31}
+          metalness={exhibit.variant % 2 === 0 ? 0.52 : 0.18}
+          clearcoat={0.58}
         />
       </mesh>
       <mesh position={[0, 1.3, 0]}>
         <boxGeometry args={[1.75, 2.5, 1.75]} />
         <meshPhysicalMaterial
-          color="#b9f3ff"
+          color="#e8fbff"
           transparent
-          opacity={0.1}
-          roughness={0.04}
-          metalness={0.04}
-          transmission={0.2}
+          opacity={0.13}
+          roughness={0.03}
+          metalness={0.02}
+          transmission={0.34}
           thickness={0.08}
           depthWrite={false}
         />
       </mesh>
       <mesh position={[0, 2.55, 0]}>
-        <boxGeometry args={[1.82, 0.055, 1.82]} />
-        <meshBasicMaterial color={exhibit.accent} transparent opacity={0.48} toneMapped={false} />
+        <boxGeometry args={[1.82, 0.045, 1.82]} />
+        <meshBasicMaterial color={exhibit.accent} transparent opacity={0.38} toneMapped={false} />
       </mesh>
     </group>
   )
@@ -306,7 +353,7 @@ function HologramDisplay({ exhibit }: { exhibit: ExhibitConfig }) {
             color={exhibit.accent}
             wireframe
             transparent
-            opacity={0.78}
+            opacity={0.72}
             blending={THREE.AdditiveBlending}
             depthWrite={false}
             toneMapped={false}
@@ -317,19 +364,19 @@ function HologramDisplay({ exhibit }: { exhibit: ExhibitConfig }) {
           <meshBasicMaterial
             color={exhibit.accent}
             transparent
-            opacity={0.08}
+            opacity={0.07}
             blending={THREE.AdditiveBlending}
             depthWrite={false}
             toneMapped={false}
           />
         </mesh>
       </group>
-      <Sparkles count={16} scale={[2.2, 2.8, 2.2]} position={[0, 1.4, 0]} size={2.1} speed={0.35} color={exhibit.accent} opacity={0.62} />
+      <Sparkles count={16} scale={[2.2, 2.8, 2.2]} position={[0, 1.4, 0]} size={2.1} speed={0.35} color={exhibit.accent} opacity={0.56} />
       <mesh position={[0, 0.48, 0]}>
         <cylinderGeometry args={[0.85, 1.05, 0.22, 48]} />
-        <meshStandardMaterial color="#0b1725" metalness={0.78} roughness={0.24} emissive={exhibit.accent} emissiveIntensity={0.26} />
+        <meshPhysicalMaterial color="#e9edef" metalness={0.28} roughness={0.25} clearcoat={0.5} emissive={exhibit.accent} emissiveIntensity={0.08} />
       </mesh>
-      <pointLight position={[0, 1.4, 0]} color={exhibit.accent} intensity={5.5} distance={4.2} decay={2} />
+      <pointLight position={[0, 1.4, 0]} color={exhibit.accent} intensity={4.4} distance={4.2} decay={2} />
     </group>
   )
 }
@@ -339,11 +386,15 @@ function Pedestal({ exhibit }: { exhibit: ExhibitConfig }) {
     <group>
       <mesh position={[0, 0.28, 0]} castShadow receiveShadow>
         <cylinderGeometry args={[1.15, 1.28, 0.56, 48]} />
-        <meshStandardMaterial color="#101826" metalness={0.75} roughness={0.3} />
+        <meshPhysicalMaterial color="#f1f2f1" metalness={0.1} roughness={0.32} clearcoat={0.4} clearcoatRoughness={0.24} />
       </mesh>
-      <mesh position={[0, 0.57, 0]}>
-        <cylinderGeometry args={[1.05, 1.05, 0.055, 48]} />
-        <meshBasicMaterial color={exhibit.accent} toneMapped={false} />
+      <mesh position={[0, 0.56, 0]}>
+        <cylinderGeometry args={[1.04, 1.04, 0.045, 48]} />
+        <meshBasicMaterial color={exhibit.accent} transparent opacity={0.78} toneMapped={false} />
+      </mesh>
+      <mesh position={[0, 0.05, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <ringGeometry args={[1.14, 1.22, 64]} />
+        <meshBasicMaterial color="#b4c0c5" transparent opacity={0.42} />
       </mesh>
     </group>
   )
@@ -400,7 +451,7 @@ export function ExhibitBooth({ exhibit }: ExhibitBoothProps) {
         <meshBasicMaterial
           color={exhibit.accent}
           transparent
-          opacity={selected ? 0.9 : hovered ? 0.55 : 0.16}
+          opacity={selected ? 0.8 : hovered ? 0.45 : 0.1}
           toneMapped={false}
           depthWrite={false}
         />
@@ -424,7 +475,7 @@ export function ExhibitBooth({ exhibit }: ExhibitBoothProps) {
         <Text
           position={[0, 0.74, 1.18]}
           fontSize={0.18}
-          color="#dffbff"
+          color="#2d3940"
           anchorX="center"
           anchorY="middle"
         >
@@ -435,5 +486,6 @@ export function ExhibitBooth({ exhibit }: ExhibitBoothProps) {
   )
 }
 
-useGLTF.preload('/models/exhibition/stanford-bunny.glb', '/draco/')
-useGLTF.preload('/models/exhibition/suzanne.glb', '/draco/')
+for (const asset of includedExhibitionAssets) {
+  useGLTF.preload(asset.url, '/draco/')
+}

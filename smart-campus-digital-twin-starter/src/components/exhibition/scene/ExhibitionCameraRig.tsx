@@ -20,8 +20,8 @@ const PRESETS = {
     target: new THREE.Vector3(0, 4.4, -17.1),
   },
   kiosk: {
-    position: new THREE.Vector3(0, 4.2, 18.4),
-    target: new THREE.Vector3(0, 1.55, 11.9),
+    position: new THREE.Vector3(0, 4.55, -4.8),
+    target: new THREE.Vector3(0, 4.3, -16.64),
   },
 } as const
 

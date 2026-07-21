@@ -1,0 +1,226 @@
+[
+  {
+    "id": "faceted-bust",
+    "title": "Faceted Memory Bust",
+    "url": "/models/exhibition/curated-demo/faceted-bust.glb",
+    "source": "Smart Exhibition procedural demo collection",
+    "license": "CC0-1.0",
+    "credit": "Generated for this starter codebase",
+    "tags": [
+      "sculpture",
+      "portrait",
+      "marble"
+    ],
+    "bytes": 40768
+  },
+  {
+    "id": "amphora-vessel",
+    "title": "Algorithmic Amphora",
+    "url": "/models/exhibition/curated-demo/amphora-vessel.glb",
+    "source": "Smart Exhibition procedural demo collection",
+    "license": "CC0-1.0",
+    "credit": "Generated for this starter codebase",
+    "tags": [
+      "heritage",
+      "ceramic",
+      "vessel"
+    ],
+    "bytes": 90892
+  },
+  {
+    "id": "orbital-rings",
+    "title": "Orbital Ring Study",
+    "url": "/models/exhibition/curated-demo/orbital-rings.glb",
+    "source": "Smart Exhibition procedural demo collection",
+    "license": "CC0-1.0",
+    "credit": "Generated for this starter codebase",
+    "tags": [
+      "kinetic",
+      "metal",
+      "abstract"
+    ],
+    "bytes": 80416
+  },
+  {
+    "id": "crystal-cluster",
+    "title": "Synthetic Crystal Archive",
+    "url": "/models/exhibition/curated-demo/crystal-cluster.glb",
+    "source": "Smart Exhibition procedural demo collection",
+    "license": "CC0-1.0",
+    "credit": "Generated for this starter codebase",
+    "tags": [
+      "mineral",
+      "futuristic",
+      "cluster"
+    ],
+    "bytes": 14784
+  },
+  {
+    "id": "robot-totem",
+    "title": "Service Totem Prototype",
+    "url": "/models/exhibition/curated-demo/robot-totem.glb",
+    "source": "Smart Exhibition procedural demo collection",
+    "license": "CC0-1.0",
+    "credit": "Generated for this starter codebase",
+    "tags": [
+      "industrial-design",
+      "robot",
+      "prototype"
+    ],
+    "bytes": 20036
+  },
+  {
+    "id": "wave-surface",
+    "title": "Topological Wave",
+    "url": "/models/exhibition/curated-demo/wave-surface.glb",
+    "source": "Smart Exhibition procedural demo collection",
+    "license": "CC0-1.0",
+    "credit": "Generated for this starter codebase",
+    "tags": [
+      "generative",
+      "surface",
+      "data-art"
+    ],
+    "bytes": 78964
+  },
+  {
+    "id": "spiral-column",
+    "title": "Helical Signal Column",
+    "url": "/models/exhibition/curated-demo/spiral-column.glb",
+    "source": "Smart Exhibition procedural demo collection",
+    "license": "CC0-1.0",
+    "credit": "Generated for this starter codebase",
+    "tags": [
+      "kinetic",
+      "spiral",
+      "lightweight"
+    ],
+    "bytes": 67140
+  },
+  {
+    "id": "abstract-mask",
+    "title": "Future Ritual Mask",
+    "url": "/models/exhibition/curated-demo/abstract-mask.glb",
+    "source": "Smart Exhibition procedural demo collection",
+    "license": "CC0-1.0",
+    "credit": "Generated for this starter codebase",
+    "tags": [
+      "heritage",
+      "mask",
+      "abstract"
+    ],
+    "bytes": 124636
+  },
+  {
+    "id": "data-monolith",
+    "title": "Data Monolith",
+    "url": "/models/exhibition/curated-demo/data-monolith.glb",
+    "source": "Smart Exhibition procedural demo collection",
+    "license": "CC0-1.0",
+    "credit": "Generated for this starter codebase",
+    "tags": [
+      "data-art",
+      "monolith",
+      "light"
+    ],
+    "bytes": 10392
+  },
+  {
+    "id": "mechanical-flower",
+    "title": "Mechanical Flower",
+    "url": "/models/exhibition/curated-demo/mechanical-flower.glb",
+    "source": "Smart Exhibition procedural demo collection",
+    "license": "CC0-1.0",
+    "credit": "Generated for this starter codebase",
+    "tags": [
+      "kinetic",
+      "botanical",
+      "industrial-design"
+    ],
+    "bytes": 59408
+  },
+  {
+    "id": "resonance-arch",
+    "title": "Resonance Arch",
+    "url": "/models/exhibition/curated-demo/resonance-arch.glb",
+    "source": "Smart Exhibition procedural demo collection",
+    "license": "CC0-1.0",
+    "credit": "Generated for this starter codebase",
+    "tags": [
+      "architecture",
+      "sound",
+      "sculpture"
+    ],
+    "bytes": 32260
+  },
+  {
+    "id": "nebula-lens",
+    "title": "Nebula Lens",
+    "url": "/models/exhibition/curated-demo/nebula-lens.glb",
+    "source": "Smart Exhibition procedural demo collection",
+    "license": "CC0-1.0",
+    "credit": "Generated for this starter codebase",
+    "tags": [
+      "optical",
+      "space",
+      "installation"
+    ],
+    "bytes": 127076
+  },
+  {
+    "id": "folded-ribbon",
+    "title": "Folded Signal Ribbon",
+    "url": "/models/exhibition/curated-demo/folded-ribbon.glb",
+    "source": "Smart Exhibition procedural demo collection",
+    "license": "CC0-1.0",
+    "credit": "Generated for this starter codebase",
+    "tags": [
+      "generative",
+      "ribbon",
+      "kinetic"
+    ],
+    "bytes": 47024
+  },
+  {
+    "id": "guardian-figure",
+    "title": "Guardian Figure",
+    "url": "/models/exhibition/curated-demo/guardian-figure.glb",
+    "source": "Smart Exhibition procedural demo collection",
+    "license": "CC0-1.0",
+    "credit": "Generated for this starter codebase",
+    "tags": [
+      "figurative",
+      "robotic",
+      "sculpture"
+    ],
+    "bytes": 29300
+  },
+  {
+    "id": "solar-orrery",
+    "title": "Solar Orrery",
+    "url": "/models/exhibition/curated-demo/solar-orrery.glb",
+    "source": "Smart Exhibition procedural demo collection",
+    "license": "CC0-1.0",
+    "credit": "Generated for this starter codebase",
+    "tags": [
+      "astronomy",
+      "kinetic",
+      "metal"
+    ],
+    "bytes": 87036
+  },
+  {
+    "id": "porcelain-lotus",
+    "title": "Porcelain Lotus",
+    "url": "/models/exhibition/curated-demo/porcelain-lotus.glb",
+    "source": "Smart Exhibition procedural demo collection",
+    "license": "CC0-1.0",
+    "credit": "Generated for this starter codebase",
+    "tags": [
+      "ceramic",
+      "botanical",
+      "heritage"
+    ],
+    "bytes": 73828
+  }
+]

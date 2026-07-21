@@ -1,9 +1,9 @@
 {
   "name": "smart-campus-digital-twin-exhibition-suite",
   "private": true,
-  "version": "3.0.0",
+  "version": "4.0.0",
   "type": "module",
-  "description": "A production-minded smart-campus digital twin extended with a futuristic 48-booth Three.js exhibition hall and an embedded Windows-inspired visitor operating system.",
+  "description": "A production-minded smart-campus digital twin with a high-key white futuristic exhibition hall, in-world visitor OS, animated media walls and pluggable digital-asset channels.",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
@@ -14,7 +14,10 @@
     "validate:release": "node scripts/validate-release.mjs",
     "dev:exhibition": "vite --open '/?experience=exhibition'",
     "dev:campus": "vite --open '/?experience=campus'",
-    "check": "npm run typecheck && npm run lint && npm run test && npm run build && npm run validate:release"
+    "check": "npm run typecheck && npm run lint && npm run test && npm run build && npm run validate:release",
+    "assets:sync": "node scripts/sync-exhibition-asset-manifest.mjs",
+    "assets:generate": "python3 scripts/generate-curated-demo-assets.py",
+    "media:generate": "python3 scripts/generate-exhibition-media.py"
   },
   "engines": {
     "node": ">=20.19.0"

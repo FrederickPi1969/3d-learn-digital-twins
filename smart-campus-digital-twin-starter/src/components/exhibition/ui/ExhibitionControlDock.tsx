@@ -1,5 +1,6 @@
 import {
   Building2,
+  Clapperboard,
   Eye,
   EyeOff,
   GalleryHorizontalEnd,
@@ -15,9 +16,11 @@ export function ExhibitionControlDock() {
   const cameraPreset = useExhibitionStore((state) => state.cameraPreset)
   const showLabels = useExhibitionStore((state) => state.showLabels)
   const showArchitecture = useExhibitionStore((state) => state.showArchitecture)
+  const mediaScreensEnabled = useExhibitionStore((state) => state.mediaScreensEnabled)
   const requestCamera = useExhibitionStore((state) => state.requestCamera)
   const toggleLabels = useExhibitionStore((state) => state.toggleLabels)
   const toggleArchitecture = useExhibitionStore((state) => state.toggleArchitecture)
+  const toggleMediaScreens = useExhibitionStore((state) => state.toggleMediaScreens)
   const setFloorPlanOpen = useExhibitionStore((state) => state.setFloorPlanOpen)
   const openOs = useExhibitionStore((state) => state.openOs)
   const resetExhibition = useExhibitionStore((state) => state.resetExhibition)
@@ -34,7 +37,7 @@ export function ExhibitionControlDock() {
         <MonitorUp size={18} /><span>导航大屏</span>
       </button>
       <button type="button" className={cameraPreset === 'kiosk' ? 'is-active' : ''} onClick={() => requestCamera('kiosk')}>
-        <PanelsTopLeft size={18} /><span>交互终端</span>
+        <PanelsTopLeft size={18} /><span>交互墙</span>
       </button>
       <span className="exhibition-control-dock__divider" />
       <button type="button" onClick={() => setFloorPlanOpen(true)}>
@@ -48,6 +51,9 @@ export function ExhibitionControlDock() {
       </button>
       <button type="button" className={showArchitecture ? 'is-active' : ''} onClick={toggleArchitecture}>
         <Building2 size={18} /><span>建筑</span>
+      </button>
+      <button type="button" className={mediaScreensEnabled ? 'is-active' : ''} onClick={toggleMediaScreens}>
+        <Clapperboard size={18} /><span>动态屏</span>
       </button>
       <button type="button" onClick={resetExhibition}>
         <RotateCcw size={18} /><span>复位</span>

@@ -1,5 +1,5 @@
-SMART CAMPUS DIGITAL TWIN + FUTURE EXHIBITION SUITE
-Release: 3.0.0
+SMART CAMPUS DIGITAL TWIN + WHITE FUTURE EXHIBITION SUITE
+Release: 4.0.0
 Validation date: 2026-07-21
 
 DEFAULT EXPERIENCE
@@ -7,46 +7,57 @@ VITE_DEFAULT_EXPERIENCE=exhibition
 Direct exhibition URL: /?experience=exhibition
 Direct campus URL: /?experience=campus
 
-CORE EXHIBITION CONTENT
+VERSION 4 EXHIBITION CONTENT
 48 data-driven exhibit booths
 4 curatorial zones, 12 booths per zone
 5 exhibit render modes
-2 local CC0 GLB demonstration models
-1 local EXR environment
-2 project-generated demonstration artworks
+18 bundled local GLB models
+16 reproducibly generated project-owned GLB assets
+2 lightweight CC0 learning GLB samples
+6 registered digital-asset provider channels
+4 world-space animated media screens
+3 local H.264 loop videos and 3 poster images
 3 offline embedded browser pages
 6 virtual operating-system applications
 1 draggable and resizable Windows-inspired desktop shell
-1 in-world live floor-map wall
-1 in-world interactive visitor kiosk
+1 unified in-world wall terminal hosting both the floor map and visitor OS
+0 detached full-screen operating-system overlays
 
 SOURCE AND BUILD COUNTS
-Source files: 83
-Public files: 17
-Production modules transformed: 4,253
+Source files under src/: 86
+TypeScript/TSX source files: 83
+Public files: 40
+Documentation files under docs/: 9
+Build/support scripts: 5
+Production modules transformed: 4,255
+Production files: 443
 Cesium runtime files: 389
-Exhibition media/runtime files: 14
-Exhibition lazy chunk: ExhibitionExperience-DGvB1-7y.js (133,435 bytes)
+Exhibition media/runtime files checked by release validation: 37
+Exhibition lazy chunk: ExhibitionExperience-DRJ8zMsY.js (145,940 bytes)
 
 VALIDATION
 TypeScript strict type check: passed
 ESLint: passed with zero errors and zero warnings
-Vitest: 7 files passed, 21 tests passed
+Vitest: 8 files passed, 25 tests passed
 Vite production build: passed
 Release asset validation: passed
+Asset-manifest synchronization smoke test: passed
 Static production HTTP checks: passed
+Headless WebGL visual capture: unavailable because the container could not initialize EGL/ANGLE
 
 STATIC PRODUCTION HTTP CHECKS
-/                                                    200 text/html
-/?experience=exhibition                              200 text/html
-/embedded/home.html                                  200 text/html
-/embedded/collection.html                            200 text/html
-/models/exhibition/stanford-bunny.glb                200 model/gltf-binary
-/artworks/digital-twin-gallery.png                   200 image/png
-/environments/night-gallery.exr                      200 image/aces
-/draco/draco_decoder.wasm                            200 application/wasm
-/cesium/Workers/createGeometry.js                    200 text/javascript
-/cesium/Widgets/widgets.css                          200 text/css
+/                                                                      200 text/html
+/?experience=exhibition                                                200 text/html
+/embedded/home.html                                                    200 text/html
+/embedded/collection.html                                              200 text/html
+/models/exhibition/curated-demo/data-monolith.glb                      200 model/gltf-binary
+/models/exhibition/curated-demo/porcelain-lotus.glb                    200 model/gltf-binary
+/media/exhibition/aurora-field.mp4                                     200 video/mp4
+/media/exhibition/motion-matrix.jpg                                    200 image/jpeg
+/environments/night-gallery.exr                                        200 image/aces
+/draco/draco_decoder.wasm                                              200 application/wasm
+/cesium/Workers/createGeometry.js                                      200 text/javascript
+/cesium/Widgets/widgets.css                                            200 text/css
 
 VISUAL ACCEPTANCE NOTE
-The source, unit tests, production build, release assets and static production routes were validated in the build container. The container did not expose a reliable hardware or software WebGL graphics context for a trustworthy screenshot regression. Perform final visual acceptance in a WebGL 2-capable desktop browser on the target graphics hardware.
+The source, tests, production bundle, release assets and static routes were validated in the build container. Final lighting, transformed-HTML alignment, video playback and graphics performance should be accepted in a WebGL 2-capable desktop browser on the target graphics hardware.

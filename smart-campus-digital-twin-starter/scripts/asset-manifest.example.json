@@ -1,0 +1,14 @@
+{
+  "provider": "local-demo",
+  "assets": [
+    {
+      "id": "example-bunny-copy",
+      "title": "Example Manifest Import",
+      "source": "../public/models/exhibition/stanford-bunny.glb",
+      "filename": "example-bunny-copy.glb",
+      "license": "CC0 / educational sample; see public/models/exhibition/ASSET_LICENSES.md",
+      "credit": "Bundled learning model",
+      "tags": ["example", "scan", "manifest-sync"]
+    }
+  ]
+}

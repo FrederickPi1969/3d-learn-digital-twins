@@ -17,14 +17,14 @@ export function ExhibitionEffects() {
       <SMAA />
       <Bloom
         mipmapBlur
-        intensity={bloomIntensity}
-        luminanceThreshold={0.64}
-        luminanceSmoothing={0.22}
+        intensity={bloomIntensity * 0.72}
+        luminanceThreshold={0.78}
+        luminanceSmoothing={0.24}
       />
-      <BrightnessContrast brightness={0.015} contrast={0.08} />
-      <HueSaturation saturation={0.09} hue={-0.008} />
-      <Noise opacity={0.008} />
-      <Vignette eskil={false} offset={0.09} darkness={0.68} />
+      <BrightnessContrast brightness={0.028} contrast={0.018} />
+      <HueSaturation saturation={0.018} hue={-0.003} />
+      <Noise opacity={0.0035} />
+      <Vignette eskil={false} offset={0.12} darkness={0.075} />
     </EffectComposer>
   )
 }

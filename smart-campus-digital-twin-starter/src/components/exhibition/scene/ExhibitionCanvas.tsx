@@ -21,10 +21,10 @@ export function ExhibitionCanvas() {
       onCreated={({ gl, scene }) => {
         gl.outputColorSpace = THREE.SRGBColorSpace
         gl.toneMapping = THREE.ACESFilmicToneMapping
-        gl.toneMappingExposure = 1.15
+        gl.toneMappingExposure = 1.16
         gl.shadowMap.enabled = true
         gl.shadowMap.type = THREE.PCFSoftShadowMap
-        scene.background = new THREE.Color('#02040a')
+        scene.background = new THREE.Color('#f0f4f6')
       }}
     >
       <AdaptiveDpr pixelated />

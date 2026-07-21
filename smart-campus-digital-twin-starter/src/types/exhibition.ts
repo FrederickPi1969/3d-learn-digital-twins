@@ -31,6 +31,26 @@ export type ExhibitionAppId =
   | 'schedule'
   | 'settings'
 
+export type ExhibitionAssetProviderId =
+  | 'local-demo'
+  | 'khronos-sample-assets'
+  | 'poly-haven'
+  | 'smithsonian-open-access'
+  | 'sketchfab'
+  | 'custom-dam'
+
+export interface ExhibitionAssetRecord {
+  id: string
+  title: string
+  url: string
+  provider: ExhibitionAssetProviderId
+  sourceLabel: string
+  license: string
+  credit: string
+  tags: readonly string[]
+  preserveMaterials: boolean
+}
+
 export interface ExhibitConfig {
   id: string
   boothNumber: number
@@ -47,6 +67,13 @@ export interface ExhibitConfig {
   accent: string
   description: string
   modelUrl?: string
+  modelTargetHeight?: number
+  modelRotation?: Vec3
+  preserveModelMaterials?: boolean
+  assetProvider?: ExhibitionAssetProviderId
+  assetSource?: string
+  assetLicense?: string
+  assetCredit?: string
   imageUrl?: string
 }
 

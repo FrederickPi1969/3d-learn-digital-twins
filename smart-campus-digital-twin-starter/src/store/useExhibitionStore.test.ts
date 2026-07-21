@@ -26,9 +26,17 @@ describe('useExhibitionStore', () => {
     useExhibitionStore.getState().setAmbientVisitors(100)
     useExhibitionStore.getState().setGalleryLighting(-2)
     useExhibitionStore.getState().setBloomIntensity(9)
+    useExhibitionStore.getState().setMediaScreenBrightness(8)
     const state = useExhibitionStore.getState()
     expect(state.ambientVisitors).toBe(28)
     expect(state.galleryLighting).toBe(0.35)
     expect(state.bloomIntensity).toBe(1.6)
+    expect(state.mediaScreenBrightness).toBe(1.35)
   })
+  it('toggles the in-world animated media walls', () => {
+    expect(useExhibitionStore.getState().mediaScreensEnabled).toBe(true)
+    useExhibitionStore.getState().toggleMediaScreens()
+    expect(useExhibitionStore.getState().mediaScreensEnabled).toBe(false)
+  })
+
 })

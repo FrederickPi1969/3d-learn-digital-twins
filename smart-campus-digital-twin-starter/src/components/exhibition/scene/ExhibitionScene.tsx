@@ -2,6 +2,7 @@ import { ContactShadows } from '@react-three/drei'
 import { exhibitionExhibits } from '@/data/exhibition'
 import { useExhibitionStore } from '@/store/useExhibitionStore'
 import { AmbientVisitors } from './AmbientVisitors'
+import { AnimatedMediaScreens } from './AnimatedMediaScreens'
 import { ExhibitBooth } from './ExhibitBooth'
 import { ExhibitionCameraRig } from './ExhibitionCameraRig'
 import { ExhibitionEffects } from './ExhibitionEffects'
@@ -14,7 +15,7 @@ export function ExhibitionScene() {
 
   return (
     <>
-      <fog attach="fog" args={['#02050b', 28, 82]} />
+      <fog attach="fog" args={['#f2f5f6', 44, 102]} />
       <ExhibitionCameraRig />
       <ExhibitionLighting />
       <ExhibitionHall />
@@ -25,17 +26,19 @@ export function ExhibitionScene() {
         ))}
       </group>
 
+      <AnimatedMediaScreens />
       <ExhibitionScreens />
       <AmbientVisitors />
 
       <ContactShadows
         position={[0, 0.035, 0]}
-        opacity={0.26}
+        opacity={0.2}
         scale={52}
-        blur={2.8}
-        far={20}
+        blur={3.4}
+        far={18}
         resolution={768}
         frames={1}
+        color="#647078"
       />
 
       <mesh

@@ -1,167 +1,178 @@
-import { useState } from 'react'
-import { Html, RoundedBox, useCursor } from '@react-three/drei'
-import { AppWindow, GalleryHorizontal, Map, MonitorCog, PanelsTopLeft } from 'lucide-react'
-import { useExhibitionStore } from '@/store/useExhibitionStore'
+import { Html, RoundedBox, Text } from '@react-three/drei'
+import {
+  GalleryHorizontal,
+  Globe2,
+  Map,
+  MonitorCog,
+  MousePointer2,
+  ScanLine,
+} from 'lucide-react'
 import { ExhibitionFloorPlan } from '@/components/exhibition/ui/ExhibitionFloorPlan'
+import { VirtualDesktop } from '@/components/exhibition/os/VirtualOSDesktop'
+import { useExhibitionStore } from '@/store/useExhibitionStore'
 
-function FloorMapWall() {
+const WALL_SCREEN_PIXEL_WIDTH = 1366
+const WALL_SCREEN_PIXEL_HEIGHT = 768
+const WALL_SCREEN_WORLD_SCALE = 0.00955
+
+function WallNavigationDashboard() {
   const setFloorPlanOpen = useExhibitionStore((state) => state.setFloorPlanOpen)
-  const requestCamera = useExhibitionStore((state) => state.requestCamera)
+  const openOs = useExhibitionStore((state) => state.openOs)
 
+  return (
+    <section
+      className="in-scene-map-screen in-scene-map-screen--unified"
+      aria-label="展厅墙面数字导航与访客系统大屏"
+      onDoubleClick={(event) => {
+        if ((event.target as HTMLElement).closest('button')) return
+        setFloorPlanOpen(true)
+      }}
+    >
+      <header>
+        <div>
+          <span>SMART EXHIBITION DIGITAL TWIN · WALL TERMINAL 01</span>
+          <strong>展区平面导航</strong>
+        </div>
+        <div className="in-scene-map-screen__metrics">
+          <span><b>48</b> 展位</span>
+          <span><b>4</b> 展区</span>
+          <span><b>98%</b> 设备在线</span>
+        </div>
+      </header>
+
+      <div className="in-scene-map-screen__body">
+        <div className="in-scene-map-screen__map-shell">
+          <div className="in-scene-map-screen__map-toolbar">
+            <span><ScanLine size={18} /> LIVE FLOOR GRAPH</span>
+            <div><i />实时同步 <b>10:42:18</b></div>
+          </div>
+          <ExhibitionFloorPlan compact interactive showLegend={false} />
+          <footer>
+            <span><i className="is-cyan" />数字艺术</span>
+            <span><i className="is-violet" />当代雕塑</span>
+            <span><i className="is-amber" />文物设计</span>
+            <span><i className="is-green" />未来实验</span>
+          </footer>
+        </div>
+
+        <aside>
+          <div className="in-scene-map-screen__metric-card">
+            <span>今日客流</span><strong>2,156</strong><small>人次 · +12.6%</small>
+          </div>
+          <div className="in-scene-map-screen__metric-card">
+            <span>实时在馆</span><strong>184</strong><small>平均停留 42 分钟</small>
+          </div>
+          <div className="in-scene-map-screen__metric-card">
+            <span>空间环境</span><strong>22.6°C</strong><small>湿度 46% · 优</small>
+          </div>
+          <button type="button" onClick={() => openOs('floor-plan')}>
+            <MonitorCog size={19} /> 启动墙面访客系统
+          </button>
+          <button type="button" className="is-secondary" onClick={() => setFloorPlanOpen(true)}>
+            <Map size={19} /> 打开全屏导航
+          </button>
+        </aside>
+      </div>
+
+      <footer className="in-scene-map-screen__footer">
+        <span><MousePointer2 size={17} /> 点击展位同步聚焦三维展品</span>
+        <nav>
+          <button type="button" onClick={() => openOs('floor-plan')}><Map size={17} />展厅导航</button>
+          <button type="button" onClick={() => openOs('gallery')}><GalleryHorizontal size={17} />数字展册</button>
+          <button type="button" onClick={() => openOs('browser')}><Globe2 size={17} />浏览器</button>
+          <button type="button" onClick={() => openOs('devices')}><MonitorCog size={17} />设备服务</button>
+        </nav>
+      </footer>
+    </section>
+  )
+}
+
+function UnifiedWallSurface() {
+  const osOpen = useExhibitionStore((state) => state.osOpen)
+  const initialApp = useExhibitionStore((state) => state.osInitialApp)
+  const sessionNonce = useExhibitionStore((state) => state.osSessionNonce)
+
+  return (
+    <div className="embedded-wall-screen-surface">
+      {osOpen ? (
+        <VirtualDesktop key={sessionNonce} initialApp={initialApp} embedded />
+      ) : (
+        <WallNavigationDashboard />
+      )}
+    </div>
+  )
+}
+
+/**
+ * A single architectural wall display hosts both the floor-map dashboard and
+ * the complete visitor operating system. There is deliberately no detached
+ * full-screen overlay or freestanding terminal: the React interface lives on
+ * the physical Three.js screen through Drei's transform-mode Html portal.
+ */
+function UnifiedWallTerminal() {
   return (
     <group position={[0, 0, 0]}>
-      <RoundedBox args={[19.6, 6.15, 0.42]} radius={0.36} smoothness={8} position={[0, 4.45, -17.45]} castShadow>
-        <meshStandardMaterial color="#0a1422" metalness={0.78} roughness={0.2} emissive="#063152" emissiveIntensity={0.45} />
+      <RoundedBox
+        args={[16.35, 8.52, 0.76]}
+        radius={0.5}
+        smoothness={10}
+        position={[0, 4.3, -17.47]}
+        castShadow
+        receiveShadow
+      >
+        <meshPhysicalMaterial
+          color="#f7f8f8"
+          roughness={0.29}
+          metalness={0.08}
+          clearcoat={0.58}
+          clearcoatRoughness={0.22}
+        />
       </RoundedBox>
-      <RoundedBox args={[18.9, 5.48, 0.12]} radius={0.24} smoothness={8} position={[0, 4.45, -17.2]}>
-        <meshBasicMaterial color="#35dfff" toneMapped={false} />
+
+      <RoundedBox args={[15.56, 8.36, 0.28]} radius={0.33} smoothness={10} position={[0, 4.3, -16.99]}>
+        <meshStandardMaterial color="#17222c" metalness={0.72} roughness={0.16} />
       </RoundedBox>
-      <mesh position={[0, 4.45, -17.13]}>
-        <planeGeometry args={[18.5, 5.12]} />
-        <meshBasicMaterial color="#03101e" toneMapped={false} />
+      <RoundedBox args={[14.96, 8.28, 0.1]} radius={0.24} smoothness={10} position={[0, 4.3, -16.8]}>
+        <meshBasicMaterial color="#54dcf5" toneMapped={false} />
+      </RoundedBox>
+      <mesh position={[0, 4.3, -16.72]}>
+        <planeGeometry args={[14.67, 8.18]} />
+        <meshBasicMaterial color="#020914" toneMapped={false} />
       </mesh>
 
       <Html
         transform
-        position={[0, 4.45, -17.05]}
-        scale={0.01725}
-        zIndexRange={[4, 1]}
-        style={{ width: 1000, height: 570, pointerEvents: 'auto' }}
+        position={[0, 4.3, -16.64]}
+        scale={WALL_SCREEN_WORLD_SCALE}
+        zIndexRange={[20, 3]}
+        style={{
+          width: WALL_SCREEN_PIXEL_WIDTH,
+          height: WALL_SCREEN_PIXEL_HEIGHT,
+          pointerEvents: 'auto',
+        }}
       >
-        <section className="in-scene-map-screen" aria-label="展厅墙面数字导航大屏">
-          <header>
-            <div>
-              <span>SMART EXHIBITION DIGITAL TWIN</span>
-              <strong>展区平面导航</strong>
-            </div>
-            <div className="in-scene-map-screen__metrics">
-              <span><b>48</b> 展位</span>
-              <span><b>4</b> 展区</span>
-              <span><b>98%</b> 设备在线</span>
-            </div>
-          </header>
-          <div className="in-scene-map-screen__body">
-            <ExhibitionFloorPlan compact interactive showLegend={false} />
-            <aside>
-              <div><span>今日客流</span><strong>2,156</strong><small>人次</small></div>
-              <div><span>实时在馆</span><strong>184</strong><small>人</small></div>
-              <div><span>平均停留</span><strong>42</strong><small>分钟</small></div>
-              <button type="button" onClick={() => setFloorPlanOpen(true)}>打开全屏导航</button>
-            </aside>
-          </div>
-        </section>
+        <UnifiedWallSurface />
       </Html>
 
-      <mesh
-        position={[0, 4.45, -16.96]}
-        visible={false}
-        onDoubleClick={(event) => {
-          event.stopPropagation()
-          requestCamera('floor-screen')
-          setFloorPlanOpen(true)
-        }}
+      <Text
+        position={[0, 8.39, -16.53]}
+        fontSize={0.13}
+        letterSpacing={0.12}
+        color="#5b6970"
+        anchorX="center"
+        anchorY="middle"
       >
-        <planeGeometry args={[18.6, 5.2]} />
-        <meshBasicMaterial transparent opacity={0} />
+        INTEGRATED NAVIGATION + VISITOR OS · 嵌入式智慧交互墙
+      </Text>
+      <mesh position={[0, 0.17, -16.52]}>
+        <boxGeometry args={[9.8, 0.045, 0.055]} />
+        <meshBasicMaterial color="#5bdef5" toneMapped={false} />
       </mesh>
-    </group>
-  )
-}
-
-function KioskDesktopPreview() {
-  const openOs = useExhibitionStore((state) => state.openOs)
-
-  return (
-    <button type="button" className="kiosk-desktop-preview" onClick={() => openOs(null)} aria-label="打开访客交互操作系统">
-      <div className="kiosk-desktop-preview__wallpaper">
-        <span className="kiosk-desktop-preview__orb kiosk-desktop-preview__orb--one" />
-        <span className="kiosk-desktop-preview__orb kiosk-desktop-preview__orb--two" />
-      </div>
-      <div className="kiosk-desktop-preview__icons">
-        <span><Map size={20} />展厅导航</span>
-        <span><GalleryHorizontal size={20} />数字展册</span>
-        <span><AppWindow size={20} />浏览器</span>
-        <span><MonitorCog size={20} />设备服务</span>
-      </div>
-      <div className="kiosk-desktop-preview__window">
-        <header><i /><i /><i /><b>SMART GALLERY PORTAL</b></header>
-        <div>
-          <strong>欢迎进入未来艺术馆</strong>
-          <span>点击屏幕启动访客交互系统</span>
-          <em>OPEN VIRTUAL DESKTOP</em>
-        </div>
-      </div>
-      <footer>
-        <PanelsTopLeft size={18} />
-        <i />
-        <i />
-        <i />
-        <span>CN&nbsp;&nbsp; 14:30</span>
-      </footer>
-    </button>
-  )
-}
-
-function VisitorKiosk() {
-  const [hovered, setHovered] = useState(false)
-  const openOs = useExhibitionStore((state) => state.openOs)
-  const requestCamera = useExhibitionStore((state) => state.requestCamera)
-  useCursor(hovered, 'pointer', 'auto')
-
-  return (
-    <group position={[0, 0, 11.9]}>
-      <RoundedBox args={[5.55, 0.5, 2.25]} radius={0.28} smoothness={6} position={[0, 1.15, 0]} rotation={[-0.31, 0, 0]} castShadow>
-        <meshStandardMaterial color="#0d1725" metalness={0.86} roughness={0.22} emissive="#05355d" emissiveIntensity={0.42} />
-      </RoundedBox>
-      <RoundedBox args={[4.3, 1.55, 1.5]} radius={0.24} smoothness={6} position={[0, 0.62, -0.17]} castShadow receiveShadow>
-        <meshStandardMaterial color="#0a111c" metalness={0.72} roughness={0.28} />
-      </RoundedBox>
-      <mesh position={[0, 0.05, 0.05]}>
-        <boxGeometry args={[4.72, 0.08, 1.96]} />
-        <meshBasicMaterial color="#3cddff" toneMapped={false} />
-      </mesh>
-      <pointLight position={[0, 1.6, 1.1]} color="#4ee4ff" intensity={8} distance={7} decay={2} />
-
-      <Html
-        transform
-        position={[0, 1.38, 0.34]}
-        rotation={[-0.31, 0, 0]}
-        scale={0.00532}
-        zIndexRange={[8, 3]}
-        style={{ width: 920, height: 480, pointerEvents: 'auto' }}
-      >
-        <KioskDesktopPreview />
-      </Html>
-
-      <mesh
-        position={[0, 1.38, 0.41]}
-        rotation={[-0.31, 0, 0]}
-        onPointerEnter={(event) => {
-          event.stopPropagation()
-          setHovered(true)
-        }}
-        onPointerLeave={(event) => {
-          event.stopPropagation()
-          setHovered(false)
-        }}
-        onClick={(event) => {
-          event.stopPropagation()
-          requestCamera('kiosk')
-          openOs(null)
-        }}
-      >
-        <planeGeometry args={[5.0, 2.48]} />
-        <meshBasicMaterial transparent opacity={0} depthWrite={false} />
-      </mesh>
+      <pointLight position={[0, 4.2, -13.8]} color="#82eaff" intensity={4.8} distance={10} decay={2} />
     </group>
   )
 }
 
 export function ExhibitionScreens() {
-  return (
-    <>
-      <FloorMapWall />
-      <VisitorKiosk />
-    </>
-  )
+  return <UnifiedWallTerminal />
 }
