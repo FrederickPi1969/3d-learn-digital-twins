@@ -1,0 +1,36 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Zen+Maru+Gothic:wght@500;700;900&display=swap');
+
+:root { color-scheme: dark; background: #102b38; }
+* { box-sizing: border-box; }
+body { margin: 0; min-width: 320px; min-height: 100vh; display: grid; place-items: center; background: radial-gradient(circle at 50% 15%, #466e69 0, #1e3b45 45%, #102b38 100%); font-family: "Zen Maru Gothic", sans-serif; }
+.game-shell { position: relative; width: min(1100px, 100vw); aspect-ratio: 16 / 9; overflow: hidden; background: #81d4ee; box-shadow: 0 18px 60px #091e27; }
+header { position: absolute; z-index: 3; top: 17px; left: 20px; display: flex; align-items: center; gap: 10px; color: #fff5cf; font: 15px "Press Start 2P", monospace; text-shadow: 2px 3px #234f50; pointer-events: none; }
+header .mark { color: #f3be69; font-size: 18px; } header small { font-size: 8px; opacity: .75; margin-left: 7px; }
+#game-root { position: absolute; inset: 0; overflow: hidden; background: #8eddf1; }
+.parallax { position: absolute; inset: 0; background-size: auto 100%; background-repeat: repeat-x; image-rendering: pixelated; }
+.sky { background-image: url('assets/sanae-shrine-platformer-assets/bg-sky.png'); }
+.mountains { background-image: url('assets/sanae-shrine-platformer-assets/bg-mountains.png'); opacity: .82; }
+.forest { background-image: url('assets/sanae-shrine-platformer-assets/bg-forest.png'); opacity: .78; }
+.world { position: absolute; inset: 0 auto 0 0; width: 4320px; height: 540px; }
+#terrain { position: absolute; inset: 0; }
+.platform { position:absolute; z-index: 2; border: 2px solid #503c37; box-shadow: inset 0 8px #a3df6d, inset 0 12px #5b9c4c, inset 0 -8px rgba(48, 30, 26, .27); background: repeating-linear-gradient(90deg, #9a6341 0 24px, #895237 24px 27px, #b37249 27px 51px); }
+.platform.stone { border-color:#59616a; box-shadow: inset 0 5px #c5d1d3, inset 0 10px #7f9495, inset 0 -5px rgba(30,42,48,.34); background: repeating-linear-gradient(90deg, #87959a 0 22px, #69787f 22px 25px, #a5b1b0 25px 46px); }
+.goal { position:absolute; left:3995px; top:250px; z-index:3; width:190px; height:225px; filter: drop-shadow(0 8px 3px rgba(22,43,40,.35)); }
+.goal::before,.goal::after { content:""; position:absolute; bottom:0; width:24px; height:170px; border:3px solid #712f30; background:linear-gradient(90deg,#8f3430,#ed7352 45%,#a33a31); }.goal::before{left:20px}.goal::after{right:20px}.goal i,.goal b{position:absolute;left:0;background:#c94b3b;border:3px solid #712f30}.goal i{top:26px;width:190px;height:23px}.goal b{top:6px;left:-18px;width:226px;height:20px;background:#a83d36}.goal span{position:absolute;top:76px;width:100%;z-index:1;text-align:center;color:#fff1b7;text-shadow:2px 2px #83342d;font:9px "Press Start 2P",monospace;}
+.player,.enemy { position:absolute; z-index:5; display:block; object-fit:contain; image-rendering:pixelated; user-select:none; pointer-events:none; }
+.player { width:120px; height:130px; left:0; top:0; }
+.player.landing { filter:brightness(1.15); }
+.player.hurt { animation:hurt .16s steps(1,end) infinite; } @keyframes hurt { 50%{opacity:.25;filter:sepia(1) saturate(4) hue-rotate(310deg)} }
+.enemy { width:88px; height:88px; animation:patrol 1.55s ease-in-out infinite alternate; }.enemy.reverse { animation-direction:alternate-reverse; }.enemy.stomped { animation:stomp .42s ease-out forwards; } @keyframes patrol { from{translate:-52px 0} to{translate:52px 0} } @keyframes stomp { to{scale:.15;opacity:0} }
+.pop { position:absolute; z-index:7; width:46px; height:46px; border:5px solid #e7ffd1; border-radius:50%; box-shadow:0 0 0 5px #8ce4dc,0 0 18px #fff5a8; animation:pop .42s ease-out forwards; }@keyframes pop{to{scale:2.4;opacity:0}}
+.hud { position:absolute; z-index:4; top:51px; left:15px; display:grid; gap:7px; padding:10px 12px; min-width:190px; color:#fff0b7; background:rgba(23,61,66,.76); border:2px solid rgba(255,241,185,.63); box-shadow:3px 3px rgba(25,58,60,.35); font:9px "Press Start 2P",monospace; line-height:1.35; }
+.screen-panel { position: absolute; inset: 0; z-index: 6; display: grid; place-items: center; padding: 20px; background: rgba(9, 29, 37, .48); backdrop-filter: blur(3px); }
+.screen-panel[hidden] { display: none; }
+.panel-card { width: min(455px, 94vw); padding: 30px 32px 25px; text-align: center; color: #23444a; border: 4px solid #29494b; box-shadow: 0 0 0 4px #f5e4b1, 10px 11px 0 #17383d; background: #f8efce; }
+.panel-card.compact { width: min(390px, 90vw); }
+.eyebrow { margin: 0 0 13px; color: #d7654e; font: 9px "Press Start 2P", monospace; line-height: 1.55; }
+h1, h2 { margin: 0; font: 19px "Press Start 2P", monospace; line-height: 1.55; } h2 { font-size: 17px; }
+.panel-card > p:not(.eyebrow) { margin: 17px 0 22px; font-size: 16px; line-height: 1.65; }
+button { padding: 15px 18px; border: 0; color: #fff4d0; background: #d85c4e; box-shadow: inset 4px 4px #f6a36c, inset -4px -4px #a5403e, 4px 4px 0 #29494b; font: 11px "Press Start 2P", monospace; cursor: pointer; }
+button:hover { filter: brightness(1.09); transform: translate(-1px, -1px); } .panel-card small { display: block; margin-top: 24px; font-size: 12px; line-height: 1.75; }
+@media (max-width: 650px) { .game-shell { width: 100vw; } header { top: 10px; left: 10px; font-size: 11px; } header small { display: none; } .panel-card { padding: 22px 18px; } h1 { font-size: 14px; } .panel-card > p:not(.eyebrow) { font-size: 14px; } }

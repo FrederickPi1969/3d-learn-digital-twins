@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>守矢山道 · 横版试炼</title>
+    <link rel="stylesheet" href="style.css?v=9" />
+  </head>
+  <body>
+    <main class="game-shell">
+      <header><span class="mark">◇</span><span>守矢山道</span><small>ONE STAGE TRIAL</small></header>
+      <div id="game-root" aria-label="守矢山道横版游戏">
+        <div class="parallax sky"></div><div class="parallax mountains"></div><div class="parallax forest"></div>
+        <div id="world" class="world"><div id="terrain"></div><div id="goal" class="goal"><i></i><b></b><span>守矢神社</span></div><img id="player" class="player" src="assets/processed/player-frames/player-0.png?v=9" draggable="false" alt=""><div id="effects"></div></div>
+        <div class="hud"><span id="score">信仰点 000</span><span id="defeated">妖怪 0 / 5</span><span id="lives">生命 ♥♥♥</span></div>
+      </div>
+      <div id="title-screen" class="screen-panel">
+        <div class="panel-card">
+          <p class="eyebrow">MORIYA MOUNTAIN · STAGE 01</p>
+          <h1>风祝的山道试炼</h1>
+          <p>越过石阶与木桥，踩过拦路的小妖，前往鸟居。</p>
+          <button id="start-button">开始试炼</button>
+          <small>← → / A D 行走 · Space / W 跳跃<br />从上方踩中妖怪即可击退它</small>
+        </div>
+      </div>
+      <div id="pause-screen" class="screen-panel" hidden>
+        <div class="panel-card compact">
+          <p class="eyebrow">PAUSED</p><h2>暂时歇脚</h2><p>按 Esc 或点击继续返回山道。</p><button id="resume-button">继续试炼</button>
+        </div>
+      </div>
+      <div id="complete-screen" class="screen-panel" hidden>
+        <div class="panel-card compact"><p class="eyebrow">STAGE CLEAR</p><h2>抵达守矢神社</h2><p id="complete-score"></p><button id="restart-button">再走一次</button></div>
+      </div>
+      <div id="game-over-screen" class="screen-panel" hidden>
+        <div class="panel-card compact"><p class="eyebrow">GAME OVER</p><h2>试炼失败</h2><p>被山间妖怪击倒了。</p><button id="retry-button">重新挑战</button></div>
+      </div>
+    </main>
+    <script src="app.js?v=9"></script>
+  </body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "project": "sanae-shrine-platformer",
+  "status": "raw-generated-assets",
+  "assets": [
+    {"file": "sanae-player-sheet.png", "type": "player-sprite-sheet", "actual_size": "1024x1536"},
+    {"file": "sanae-tileset.png", "type": "platformer-tileset", "actual_size": "1024x1536"},
+    {"file": "mori-yokai-sheet.png", "type": "ground-enemy-sprite-sheet", "actual_size": "1024x1536"},
+    {"file": "flying-spirit-sheet.png", "type": "flying-enemy-sprite-sheet", "actual_size": "1024x1536"},
+    {"file": "effects-sheet.png", "type": "effects-sprite-sheet", "actual_size": "1024x1536"},
+    {"file": "bg-sky.png", "type": "parallax-background-far", "actual_size": "1672x941"},
+    {"file": "bg-mountains.png", "type": "parallax-background-middle", "actual_size": "1672x941"},
+    {"file": "bg-forest.png", "type": "parallax-background-near", "actual_size": "1672x941"},
+    {"file": "ui-icons.png", "type": "ui-icon-sheet", "actual_size": "1024x1536"},
+    {"file": "shrine-goal.png", "type": "level-goal-sprite", "actual_size": "1024x1536"}
+  ],
+  "note": "These are raw image-generation outputs. Before direct runtime slicing, normalize canvas dimensions, remove any residual matte/background pixels, and align frames to the agreed cell grid."
+}

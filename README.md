@@ -1,9 +1,21 @@
 # 3D Learn — Digital Twin Experiments
 
-This public monorepo contains two browser-based 3D digital-twin prototypes.
+This public monorepo contains browser-based 3D experiments and small interactive game prototypes.
 
 - `smart-campus-digital-twin-starter/` — campus GIS/digital-twin starter, built with React, Vite and Three.js.
 - `warehouse-sorting-digital-twin/` — standalone warehouse sorting scene, built with native Three.js modules and served as static files.
+- `sanae-shrine-platformer/` — a single-level Sanae-themed 2D platform game with walking, jumping, platform gaps, enemy stomping and a parallax camera.
+
+## Sanae platformer
+
+Serve the game locally:
+
+```bash
+cd sanae-shrine-platformer
+python3 -m http.server 8091
+```
+
+Then open `http://localhost:8091`.
 
 ## Warehouse demo
 
