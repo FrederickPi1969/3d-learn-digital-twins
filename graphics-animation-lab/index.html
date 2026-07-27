@@ -3,61 +3,24 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Graphics & Animation Lab</title>
+    <title>Computer Graphics Field Guide</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <main class="shell">
       <header class="hero">
-        <div>
-          <p class="eyebrow">CUSTOM INTERACTIVE TOOL · FROM STATE TO PIXELS</p>
-          <h1>Graphics &amp; Animation Lab</h1>
-          <p class="subtitle">给懂 game state、但想看懂画面怎样被画出来的你：动手改顶点、形变公式和骨骼权重。</p>
-        </div>
+        <div class="hero-copy"><p class="eyebrow">A PRACTICAL GRAPHICS COURSE · STATE → VERTICES → PIXELS</p><h1>Computer Graphics<br><em>Field Guide</em></h1><p>写 game state 你已很熟；这里从坐标、矩阵到骨骼，把“画面到底怎么被画出来”拆成可以拖、可以改、可以二开的 JavaScript 实验。</p><div class="hero-tags"><span>Canvas 2D</span><span>Linear algebra</span><span>Animation</span><span>Shader mindset</span></div></div>
+        <img src="assets/sanae-reference.jpeg" alt="用于所有图形学实验的角色参考图" />
         <button id="play-toggle" class="play-button" type="button">暂停动效</button>
       </header>
-
-      <section class="mental-model">
-        <span>game state</span><b>→</b><span>vertices</span><b>→</b><span>triangles</span><b>→</b><span>pixels</span>
-        <p>后端更新状态；渲染器把状态变成顶点坐标，再把三角形涂成像素。</p>
-      </section>
-
-      <nav class="tabs" aria-label="教程模块">
-        <button class="tab active" data-view="mesh" type="button"><span>01</span> Mesh Grid</button>
-        <button class="tab" data-view="deform" type="button"><span>02</span> Deformation</button>
-        <button class="tab" data-view="skeleton" type="button"><span>03</span> Skeleton Skinning</button>
+      <section class="pipeline"><b>你的游戏状态</b><i>①</i><b>model matrix</b><i>②</i><b>camera / projection</b><i>③</i><b>vertices &amp; triangles</b><i>④</i><b>fragments / pixels</b></section>
+      <section class="course-intro"><p><strong>先抓住一件事：</strong>渲染不是“把一张图放上去”。CPU 维护状态；GPU 对每个顶点做矩阵运算，把三角形投影到屏幕，并在每一个像素上插值、着色。下面每节都是这条 pipeline 的一段。</p><button id="reset-all" type="button">重置当前实验</button></section>
+      <nav class="tabs" aria-label="课程模块">
+        <button class="tab active" data-view="spaces"><span>01</span> 坐标空间</button><button class="tab" data-view="vectors"><span>02</span> 向量与矩阵</button><button class="tab" data-view="transform"><span>03</span> Model Matrix</button><button class="tab" data-view="projection"><span>04</span> Camera &amp; Projection</button><button class="tab" data-view="lighting"><span>05</span> 插值、法线与光</button><button class="tab" data-view="deform"><span>06</span> Mesh Deformation</button><button class="tab" data-view="skeleton"><span>07</span> Skeleton Skinning</button>
       </nav>
-
-      <section class="studio">
-        <div class="canvas-card">
-          <div class="canvas-head"><span id="canvas-label">顶点网格 · 拖动任意亮点</span><span id="fps">60 fps</span></div>
-          <canvas id="lab-canvas" width="900" height="560" aria-label="图形与动画交互画布"></canvas>
-          <div class="canvas-hint" id="canvas-hint">拖动亮色顶点，观察相邻三角形怎样跟着改变。</div>
-        </div>
-        <aside class="control-card">
-          <div class="lesson-copy">
-            <p class="eyebrow" id="lesson-kicker">01 · MESH</p>
-            <h2 id="lesson-title">网格不是一张图，它是一组顶点</h2>
-            <p id="lesson-body"></p>
-          </div>
-          <div id="controls" class="controls"></div>
-          <div class="formula-card">
-            <span>Live formula</span>
-            <code id="formula"></code>
-          </div>
-          <div class="matrix-card">
-            <span>当前计算快照</span>
-            <pre id="matrix-output"></pre>
-          </div>
-        </aside>
-      </section>
-
-      <section class="takeaways">
-        <article><strong>你在改什么？</strong><p id="what-you-change">每一个亮点都是一个 vertex；线条把相邻 vertex 连接成 triangles。</p></article>
-        <article><strong>GPU 会做什么？</strong><p id="what-gpu-does">真正的 GPU 会并行处理每个 vertex，再把三角形光栅化为 pixels。</p></article>
-        <article><strong>今天怎么二开？</strong><p id="next-hack">先新增一个顶点属性，例如 color 或 weight，再让 draw 函数可视化它。</p></article>
-      </section>
-    </main>
-    <script src="app.js"></script>
+      <section class="studio"><div class="canvas-card"><div class="canvas-head"><span id="canvas-label"></span><span id="fps">60 fps</span></div><canvas id="lab-canvas" width="960" height="560"></canvas><div class="canvas-hint" id="canvas-hint"></div></div><aside class="control-card"><p class="eyebrow" id="lesson-kicker"></p><h2 id="lesson-title"></h2><p id="lesson-body"></p><div id="controls" class="controls"></div><div class="formula-card"><span>Live formula</span><code id="formula"></code></div><div class="matrix-card"><span>当前计算快照</span><pre id="matrix-output"></pre></div></aside></section>
+      <section class="takeaways"><article><strong>你在改什么？</strong><p id="what-you-change"></p></article><article><strong>GPU 会做什么？</strong><p id="what-gpu-does"></p></article><article><strong>今天怎么二开？</strong><p id="next-hack"></p></article></section>
+      <section class="cheatsheet"><h2>一页公式地图</h2><div><code>p' = M · p</code><p>齐次坐标让 translation 也成为矩阵乘法。</p></div><div><code>dot(a,b) = |a||b|cosθ</code><p>点积测“朝向同一边”的程度，用在光照。</p></div><div><code>lerp(a,b,t) = (1−t)a + tb</code><p>三角形内部颜色、UV、法线都会被插值。</p></div><div><code>p_screen = P · V · M · p_local</code><p>M、V、P 是你进入 3D 引擎前最重要的三矩阵。</p></div></section>
+    </main><script src="app.js"></script>
   </body>
 </html>
