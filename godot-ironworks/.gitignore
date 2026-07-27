@@ -1,5 +1,6 @@
 # Godot editor cache and machine-specific metadata.
 .godot/
+*.import
 
 # macOS Finder metadata.
 .DS_Store

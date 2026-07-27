@@ -41,8 +41,11 @@ var belt_phase := 0.0
 var message := "任务：采集矿石，扩建第一条自动化生产线。"
 var message_timer := 4.5
 var won := false
+var ui_font: Font
 
 func _ready() -> void:
+	# Bundle a CJK-capable font: ThemeDB's fallback only covers Latin glyphs on Web.
+	ui_font = load("res://assets/fonts/NotoSansCJKsc-Regular.otf")
 	seed(240727)
 	_build_world()
 	queue_redraw()
@@ -254,7 +257,7 @@ func _display_name(kind: String) -> String:
 	return kind
 
 func _draw() -> void:
-	var font := ThemeDB.fallback_font
+	var font := ui_font if ui_font != null else ThemeDB.fallback_font
 	draw_rect(Rect2(Vector2.ZERO, Vector2(1024, 720)), Color("#07101a"), true)
 	_draw_header(font)
 	_draw_world(font)

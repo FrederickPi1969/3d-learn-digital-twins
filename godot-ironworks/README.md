@@ -2,6 +2,8 @@
 
 一个以 Factorio 生产链为灵感、用于跑通 Godot 4 到 WebAssembly 导出的 2D 原型。
 
+界面包含中文，因此项目随导出包附带开源 Noto Sans CJK SC 字体及其 OFL 许可；不能依赖浏览器或操作系统是否安装中文字体。
+
 ## 可玩循环
 
 - `WASD` / 方向键移动角色。
