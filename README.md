@@ -5,6 +5,7 @@ This public monorepo contains browser-based 3D experiments and small interactive
 - `smart-campus-digital-twin-starter/` — campus GIS/digital-twin starter, built with React, Vite and Three.js.
 - `warehouse-sorting-digital-twin/` — standalone warehouse sorting scene, built with native Three.js modules and served as static files.
 - `sanae-shrine-platformer/` — a single-level Sanae-themed 2D platform game with walking, jumping, platform gaps, enemy stomping and a parallax camera.
+- `godot-ironworks/` — a Godot 4 production-chain prototype, including a committed WebAssembly build for browser delivery.
 
 ## Sanae platformer
 
@@ -16,6 +17,18 @@ python3 -m http.server 8091
 ```
 
 Then open `http://localhost:8091`.
+
+## Godot WebAssembly demo
+
+The Godot project and its browser export live in `godot-ironworks/`. The prototype has manual mining, automatic drills, furnaces, conveyor visuals, crafting and a research-station goal.
+
+Serve the exported bundle locally:
+
+```bash
+python3 -m http.server 8092 --directory godot-ironworks/build/web
+```
+
+Then open `http://localhost:8092/ironworks.html`.
 
 ## Warehouse demo
 

@@ -1,0 +1,5 @@
+# Godot editor cache and machine-specific metadata.
+.godot/
+
+# macOS Finder metadata.
+.DS_Store
