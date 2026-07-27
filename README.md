@@ -6,6 +6,7 @@ This public monorepo contains browser-based 3D experiments and small interactive
 - `warehouse-sorting-digital-twin/` — standalone warehouse sorting scene, built with native Three.js modules and served as static files.
 - `sanae-shrine-platformer/` — a single-level Sanae-themed 2D platform game with walking, jumping, platform gaps, enemy stomping and a parallax camera.
 - `godot-ironworks/` — a Godot 4 production-chain prototype, including a committed WebAssembly build for browser delivery.
+- `graphics-animation-lab/` — an interactive JavaScript tutorial for mesh grids, vertex deformation and skeleton skinning.
 
 ## Sanae platformer
 
@@ -29,6 +30,16 @@ python3 -m http.server 8092 --directory godot-ironworks/build/web
 ```
 
 Then open `http://localhost:8092/ironworks.html`.
+
+## Graphics & Animation Lab
+
+This Canvas-based lab makes the mesh vertices, deformation formula and skinning weights visible before moving on to WebGL or a full game engine.
+
+```bash
+python3 -m http.server 8093 --directory graphics-animation-lab
+```
+
+Then open `http://localhost:8093`.
 
 ## Warehouse demo
 
