@@ -76,3 +76,11 @@ button { font: inherit; cursor: pointer; }
 @keyframes carpet-shimmer { 50% { filter:brightness(1.15); } }
 .scene.transitioning { animation:scene-flash .35s steps(3,end); }
 @keyframes scene-flash { 0%,100% { filter:none; } 48% { filter:brightness(2.1) saturate(.55); } }
+
+/* CC0 four-direction walk cycle by Skab: transparent frames, no chroma-key backdrop. */
+.player { width:6.2%; height:12%; background-image:url("assets/walker-sheet.png"); background-size:300% 400%; background-repeat:no-repeat; filter:drop-shadow(2px 3px 0 rgba(38, 28, 41, .38)); transform:none; }
+.player.facing-down, .player.facing-left, .player.facing-up, .player.facing-right { transform:none; }
+.player.facing-down.frame-0 { background-position:0% 0%; }.player.facing-down.frame-1 { background-position:50% 0%; }.player.facing-down.frame-2 { background-position:100% 0%; }
+.player.facing-left.frame-0 { background-position:0% 33.333%; }.player.facing-left.frame-1 { background-position:50% 33.333%; }.player.facing-left.frame-2 { background-position:100% 33.333%; }
+.player.facing-up.frame-0 { background-position:0% 66.666%; }.player.facing-up.frame-1 { background-position:50% 66.666%; }.player.facing-up.frame-2 { background-position:100% 66.666%; }
+.player.facing-right.frame-0 { background-position:0% 100%; }.player.facing-right.frame-1 { background-position:50% 100%; }.player.facing-right.frame-2 { background-position:100% 100%; }

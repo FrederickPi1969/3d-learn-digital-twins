@@ -35,6 +35,8 @@ let activeHouse = null;
 let player = { x: 10, y: 7, facing: 'down' };
 let moving = false;
 let toastTimer;
+let walkFrame = 0;
+let strideTimers = [];
 
 function showToast(message) {
   toastEl.textContent = message;
@@ -104,7 +106,7 @@ function positionPlayer() {
   const rows = scene === 'world' ? worldRows : interiorRows;
   playerEl.style.left = `${player.x * (100 / rows[0].length)}%`;
   playerEl.style.top = `${player.y * (100 / rows.length)}%`;
-  playerEl.className = `player facing-${player.facing}`;
+  playerEl.className = `player facing-${player.facing} frame-${walkFrame}`;
 }
 
 function blocked(x, y) {
@@ -144,9 +146,14 @@ function move(direction) {
   player.facing = direction;
   const x = player.x + delta[0], y = player.y + delta[1];
   if (blocked(x, y)) { positionPlayer(); return; }
-  player.x = x; player.y = y; positionPlayer();
-  playerEl.classList.add('walking');
-  setTimeout(() => playerEl.classList.remove('walking'), 250);
+  player.x = x; player.y = y;
+  strideTimers.forEach(clearTimeout);
+  walkFrame = 1;
+  positionPlayer();
+  strideTimers = [
+    setTimeout(() => { walkFrame = 2; positionPlayer(); }, 76),
+    setTimeout(() => { walkFrame = 0; positionPlayer(); }, 152),
+  ];
   if (scene === 'world') {
     const house = houses.find(h => h.door[0] === x && h.door[1] === y);
     if (house) setTimeout(() => enter(house), 130);
