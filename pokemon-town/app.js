@@ -14,9 +14,9 @@ const worldRows = [
 ];
 
 const houses = [
-  { id: '赤木家', x: 2, y: 2, color: 'red', door: [3, 4], spawn: [7, 8], message: '赤木家：地毯是暖红色的。' },
-  { id: '蓝风屋', x: 8, y: 2, color: 'blue', door: [9, 4], spawn: [7, 8], message: '蓝风屋：窗外就是镇上的草地。' },
-  { id: '旅人小屋', x: 14, y: 5, color: 'red', door: [15, 7], spawn: [7, 8], message: '旅人小屋：欢迎回来。' },
+  { id: '赤木家', x: 4, y: 1, color: 'red', door: [5, 3], spawn: [7, 8], message: '赤木家：地毯是暖红色的。' },
+  { id: '蓝风屋', x: 10, y: 2, color: 'blue', door: [11, 4], spawn: [7, 8], message: '蓝风屋：窗外就是镇上的草地。' },
+  { id: '旅人小屋', x: 14, y: 3, color: 'red', door: [15, 5], spawn: [7, 8], message: '旅人小屋：欢迎回来。' },
 ];
 const interiorRows = [
   'wwwwwwwwwwwwww', 'w............w', 'w..b.....p...w', 'w............w', 'w....cccc....w',
@@ -54,13 +54,41 @@ function createTile(code, isInterior) {
 function renderMap() {
   const rows = scene === 'world' ? worldRows : interiorRows;
   mapEl.innerHTML = '';
-  mapEl.className = scene === 'world' ? 'map' : 'map interior-map';
+  mapEl.className = scene === 'world' ? 'map tiny-town-world' : 'map interior-map';
   mapEl.style.gridTemplateColumns = `repeat(${rows[0].length}, 1fr)`;
   mapEl.style.gridTemplateRows = `repeat(${rows.length}, 1fr)`;
   rows.flatMap(row => [...row]).forEach(code => mapEl.append(createTile(code, scene !== 'world')));
-  if (scene === 'world') houses.forEach(renderHouse);
+  if (scene === 'world') {
+    houses.forEach(renderDoor);
+    renderAmbient();
+  }
   locationEl.textContent = scene === 'world' ? '叶风镇 · 广场' : activeHouse.id;
   positionPlayer();
+}
+
+function renderDoor(house) {
+  const marker = document.createElement('div');
+  marker.className = 'door-marker';
+  marker.dataset.house = house.id;
+  marker.style.left = `${house.door[0] * 5 + 1.35}%`;
+  marker.style.top = `${house.door[1] * (100 / 12) - .4}%`;
+  mapEl.append(marker);
+}
+
+function renderAmbient() {
+  const layer = document.createElement('div');
+  layer.className = 'ambient-layer';
+  [[20,24,1.7,7],[42,16,2.2,-12],[68,34,1.5,8],[84,19,2.5,-6]].forEach(([x,y,s,d]) => {
+    const dot = document.createElement('i');
+    dot.className = 'firefly'; dot.style.left = `${x}%`; dot.style.top = `${y}%`;
+    dot.style.setProperty('--speed', `${s}s`); dot.style.setProperty('--drift', `${d}px`); layer.append(dot);
+  });
+  [[8,69,1.1],[34,78,1.5],[56,65,1.3],[92,71,1.7]].forEach(([x,y,s]) => {
+    const leaf = document.createElement('i');
+    leaf.className = 'leaf'; leaf.style.left = `${x}%`; leaf.style.top = `${y}%`;
+    leaf.style.setProperty('--speed', `${s}s`); layer.append(leaf);
+  });
+  mapEl.append(layer);
 }
 
 function renderHouse(house) {
@@ -100,10 +128,14 @@ function fadeTo(callback) {
 }
 
 function enter(house) {
-  fadeTo(() => { scene = 'interior'; activeHouse = house; player = { x: 7, y: 8, facing: 'up' }; renderMap(); showToast(house.message); });
+  const marker = mapEl.querySelector(`[data-house="${house.id}"]`);
+  marker?.classList.add('open');
+  sceneEl.classList.add('transitioning');
+  setTimeout(() => fadeTo(() => { scene = 'interior'; activeHouse = house; player = { x: 7, y: 8, facing: 'up' }; renderMap(); showToast(house.message); sceneEl.classList.remove('transitioning'); }), 120);
 }
 function exitHouse() {
-  fadeTo(() => { scene = 'world'; player = { x: activeHouse.door[0], y: activeHouse.door[1] + 1, facing: 'down' }; renderMap(); showToast('回到了叶风镇。'); activeHouse = null; });
+  sceneEl.classList.add('transitioning');
+  fadeTo(() => { scene = 'world'; player = { x: activeHouse.door[0], y: activeHouse.door[1] + 1, facing: 'down' }; renderMap(); showToast('回到了叶风镇。'); activeHouse = null; sceneEl.classList.remove('transitioning'); });
 }
 
 function move(direction) {
@@ -113,6 +145,8 @@ function move(direction) {
   const x = player.x + delta[0], y = player.y + delta[1];
   if (blocked(x, y)) { positionPlayer(); return; }
   player.x = x; player.y = y; positionPlayer();
+  playerEl.classList.add('walking');
+  setTimeout(() => playerEl.classList.remove('walking'), 250);
   if (scene === 'world') {
     const house = houses.find(h => h.door[0] === x && h.door[1] === y);
     if (house) setTimeout(() => enter(house), 130);

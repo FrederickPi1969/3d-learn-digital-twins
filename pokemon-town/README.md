@@ -6,4 +6,6 @@
 
 ## 素材致谢
 
-`assets/overworld_tileset_grass.png` 来自 [OpenGameArt 的 Overworld Tileset Grass](https://opengameart.org/content/overworld-tileset-grass)，仅用作草地纹理参考/背景素材。其余地图布置与界面由本项目 CSS/JavaScript 组合实现。
+主地图与玩家精灵来自 Kenney 的 [Tiny Town](https://opengameart.org/content/tiny-town) 素材包（CC0）。`assets/kenney-tiny-town/LICENSE.txt` 随包保留；Kenney 的 CC0 授权不要求署名。
+
+`assets/overworld_tileset_grass.png` 来自 [OpenGameArt 的 Overworld Tileset Grass](https://opengameart.org/content/overworld-tileset-grass)，保留作草地纹理参考。
