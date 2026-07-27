@@ -122,7 +122,9 @@ func _run_automation(delta: float) -> void:
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo:
-		match event.keycode:
+		# Physical keys keep WASD/E/G reliable in Web builds and with IMEs enabled.
+		var pressed_key: int = int(event.physical_keycode) if event.physical_keycode != KEY_NONE else int(event.keycode)
+		match pressed_key:
 			KEY_E:
 				_manual_mine()
 			KEY_G:
@@ -140,8 +142,15 @@ func _input(event: InputEvent) -> void:
 					_close_panel()
 				else:
 					_select("drill")
-	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed and not won:
+	if event is InputEventMouseButton and event.pressed and not won:
 		var mouse := get_global_mouse_position()
+		if event.button_index == MOUSE_BUTTON_RIGHT:
+			if PANEL_RECT.has_point(mouse):
+				return
+			_dismantle(_mouse_cell())
+			return
+		if event.button_index != MOUSE_BUTTON_LEFT:
+			return
 		if _panel_is_open() and PANEL_RECT.has_point(mouse):
 			_handle_panel_click(mouse)
 			return
@@ -168,7 +177,7 @@ func _take_resource(cell: Vector2i, count: int, automated: bool) -> void:
 	if not resources.has(cell):
 		return
 	var deposit: Dictionary = resources[cell]
-	var gained := "%s_ore" % deposit.kind if deposit.kind != "stone" else "stone"
+	var gained := _resource_item(deposit.kind)
 	if automated:
 		var drill_store: Dictionary = building_storage[cell]
 		drill_store.output += count
@@ -246,12 +255,49 @@ func _new_storage(kind: String, cell: Vector2i) -> Dictionary:
 	match kind:
 		"drill":
 			var deposit: Dictionary = resources[cell]
-			return {"resource": "%s_ore" % deposit.kind if deposit.kind != "stone" else "stone", "output": 0}
+			return {"resource": _resource_item(deposit.kind), "output": 0}
 		"furnace":
 			return {"iron_ore": 0, "copper_ore": 0, "coal": 0, "iron_plate": 0, "copper_plate": 0}
 		"belt":
 			return {"iron_ore": 0, "copper_ore": 0, "coal": 0}
 	return {}
+
+func _resource_item(resource_kind: String) -> String:
+	match resource_kind:
+		"iron": return "iron_ore"
+		"copper": return "copper_ore"
+		"coal": return "coal"
+		"stone": return "stone"
+	return resource_kind
+
+func _dismantle(cell: Vector2i) -> void:
+	if not buildings.has(cell):
+		_note("右键点已有设施可拆除。", 1.4)
+		return
+	var kind: String = buildings[cell]
+	var store: Dictionary = building_storage.get(cell, {})
+	match kind:
+		"drill":
+			inventory.iron_plate += 2
+			inventory.gear += 1
+			if not store.is_empty():
+				inventory[store.resource] += store.output
+		"furnace":
+			inventory.stone += 6
+			for item in ["iron_ore", "copper_ore", "coal", "iron_plate", "copper_plate"]:
+				inventory[item] += store[item]
+		"belt":
+			inventory.iron_plate += 1
+			for item in ["iron_ore", "copper_ore", "coal"]:
+				inventory[item] += store[item]
+		"lab":
+			inventory.iron_plate += 8
+			inventory.copper_plate += 5
+	buildings.erase(cell)
+	building_storage.erase(cell)
+	if opened_building == cell:
+		opened_building = Vector2i(-1, -1)
+	_note("已拆除%s，材料与内部库存已返还。" % _building_name(kind), 2.0)
 
 func _check_win() -> void:
 	if _count_buildings("lab") > 0 and not won:
@@ -503,7 +549,7 @@ func _draw_footer(font: Font) -> void:
 	draw_rect(Rect2(0, 680, 1024, 40), Color("#0d1b29"), true)
 	var selector := "[1]采矿机  [2]石炉  [3]传送带  [4]研究站"
 	draw_string(font, Vector2(24, 705), selector, HORIZONTAL_ALIGNMENT_LEFT, -1, 15, Color("#c8dce8"))
-	draw_string(font, Vector2(506, 705), "当前：%s  ·  点击空地建造 / 点击设施开面板  ·  E 挖矿" % _building_name(selected), HORIZONTAL_ALIGNMENT_LEFT, -1, 15, Color("#f4d68e"))
+	draw_string(font, Vector2(506, 705), "左键建造/开面板  ·  右键拆除  ·  E 挖矿  ·  G 合成齿轮", HORIZONTAL_ALIGNMENT_LEFT, -1, 15, Color("#f4d68e"))
 	if message_timer > 0.0:
 		draw_rect(Rect2(220, 638, 584, 30), Color(0.03, 0.08, 0.12, 0.94), true)
 		draw_string(font, Vector2(238, 660), message, HORIZONTAL_ALIGNMENT_CENTER, 548, 15, Color("#d5f4ff"))
