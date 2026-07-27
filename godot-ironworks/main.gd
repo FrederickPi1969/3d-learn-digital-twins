@@ -6,6 +6,7 @@ const ROWS := 17
 const ORIGIN := Vector2(48, 128)
 const WORLD_SIZE := Vector2(COLS * TILE, ROWS * TILE)
 const PLAYER_SPEED := 250.0
+const PANEL_RECT := Rect2(676, 142, 326, 442)
 
 const RESOURCE_COLORS := {
 	"iron": Color("#8db6d8"),
@@ -24,6 +25,7 @@ const BUILDING_COLORS := {
 var player := Vector2(5.5, 8.5)
 var resources: Dictionary = {}
 var buildings: Dictionary = {}
+var building_storage: Dictionary = {}
 var inventory := {
 	"iron_ore": 0,
 	"copper_ore": 0,
@@ -42,6 +44,7 @@ var message := "任务：采集矿石，扩建第一条自动化生产线。"
 var message_timer := 4.5
 var won := false
 var ui_font: Font
+var opened_building := Vector2i(-1, -1)
 
 func _ready() -> void:
 	# Bundle a CJK-capable font: ThemeDB's fallback only covers Latin glyphs on Web.
@@ -98,19 +101,23 @@ func _run_automation(delta: float) -> void:
 	if drill_timer >= 1.25:
 		drill_timer = 0.0
 		for cell in buildings:
-			if buildings[cell] == "drill" and resources.has(cell):
+			if buildings[cell] == "drill" and resources.has(cell) and building_storage[cell].output < 20:
 				_take_resource(cell, 1, true)
 	if furnace_timer >= 1.15:
 		furnace_timer = 0.0
-		if _count_buildings("furnace") > 0 and inventory.coal > 0:
-			if inventory.iron_ore > 0:
-				inventory.iron_ore -= 1
-				inventory.coal -= 1
-				inventory.iron_plate += 1
-			elif inventory.copper_ore > 0:
-				inventory.copper_ore -= 1
-				inventory.coal -= 1
-				inventory.copper_plate += 1
+		for cell in buildings:
+			if buildings[cell] != "furnace":
+				continue
+			var store: Dictionary = building_storage[cell]
+			if store.coal > 0 and store.iron_ore > 0:
+				store.coal -= 1
+				store.iron_ore -= 1
+				store.iron_plate += 1
+			elif store.coal > 0 and store.copper_ore > 0:
+				store.coal -= 1
+				store.copper_ore -= 1
+				store.copper_plate += 1
+			building_storage[cell] = store
 	_check_win()
 
 func _input(event: InputEvent) -> void:
@@ -129,9 +136,20 @@ func _input(event: InputEvent) -> void:
 			KEY_4:
 				_select("lab")
 			KEY_ESCAPE:
-				_select("drill")
+				if _panel_is_open():
+					_close_panel()
+				else:
+					_select("drill")
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed and not won:
-		_place_selected(_mouse_cell())
+		var mouse := get_global_mouse_position()
+		if _panel_is_open() and PANEL_RECT.has_point(mouse):
+			_handle_panel_click(mouse)
+			return
+		var cell := _mouse_cell()
+		if buildings.has(cell):
+			_open_panel(cell)
+		else:
+			_place_selected(cell)
 
 func _manual_mine() -> void:
 	var nearest := Vector2i(-99, -99)
@@ -151,7 +169,12 @@ func _take_resource(cell: Vector2i, count: int, automated: bool) -> void:
 		return
 	var deposit: Dictionary = resources[cell]
 	var gained := "%s_ore" % deposit.kind if deposit.kind != "stone" else "stone"
-	inventory[gained] += count
+	if automated:
+		var drill_store: Dictionary = building_storage[cell]
+		drill_store.output += count
+		building_storage[cell] = drill_store
+	else:
+		inventory[gained] += count
 	deposit.amount -= count
 	if deposit.amount <= 0:
 		resources.erase(cell)
@@ -215,8 +238,20 @@ func _place_selected(cell: Vector2i) -> void:
 		inventory.iron_plate -= 8
 		inventory.copper_plate -= 5
 	buildings[cell] = selected
+	building_storage[cell] = _new_storage(selected, cell)
 	_note("已建造：%s。" % _building_name(selected), 1.8)
 	_check_win()
+
+func _new_storage(kind: String, cell: Vector2i) -> Dictionary:
+	match kind:
+		"drill":
+			var deposit: Dictionary = resources[cell]
+			return {"resource": "%s_ore" % deposit.kind if deposit.kind != "stone" else "stone", "output": 0}
+		"furnace":
+			return {"iron_ore": 0, "copper_ore": 0, "coal": 0, "iron_plate": 0, "copper_plate": 0}
+		"belt":
+			return {"iron_ore": 0, "copper_ore": 0, "coal": 0}
+	return {}
 
 func _check_win() -> void:
 	if _count_buildings("lab") > 0 and not won:
@@ -232,6 +267,94 @@ func _count_buildings(kind: String) -> int:
 		if buildings[cell] == kind:
 			total += 1
 	return total
+
+func _panel_is_open() -> bool:
+	return opened_building.x >= 0 and buildings.has(opened_building)
+
+func _open_panel(cell: Vector2i) -> void:
+	opened_building = cell
+	_note("已打开 %s 面板。" % _building_name(buildings[cell]), 1.4)
+
+func _close_panel() -> void:
+	opened_building = Vector2i(-1, -1)
+	_note("已关闭设施面板。", 1.2)
+
+func _panel_button_rect(index: int) -> Rect2:
+	return Rect2(696, 302 + index * 48, 286, 36)
+
+func _handle_panel_click(mouse: Vector2) -> void:
+	if Rect2(966, 156, 24, 24).has_point(mouse):
+		_close_panel()
+		return
+	var kind: String = buildings[opened_building]
+	for index in range(5):
+		if _panel_button_rect(index).has_point(mouse):
+			_handle_panel_action(kind, index)
+			return
+
+func _handle_panel_action(kind: String, index: int) -> void:
+	if index == 4:
+		_close_panel()
+		return
+	var store: Dictionary = building_storage[opened_building]
+	match kind:
+		"drill":
+			if index == 0:
+				var item: String = store.resource
+				if store.output <= 0:
+					_note("采矿机缓存为空，等待它继续开采。", 1.8)
+					return
+				inventory[item] += store.output
+				_note("从采矿机取出 %d %s。" % [store.output, _display_name(item)], 1.8)
+				store.output = 0
+		"furnace":
+			if index == 0:
+				_move_inventory_to_store(store, "iron_ore")
+			elif index == 1:
+				_move_inventory_to_store(store, "copper_ore")
+			elif index == 2:
+				_move_inventory_to_store(store, "coal")
+			elif index == 3:
+				_collect_furnace_output(store)
+		"belt":
+			if index == 0:
+				_move_inventory_to_store(store, "iron_ore")
+			elif index == 1:
+				_move_inventory_to_store(store, "copper_ore")
+			elif index == 2:
+				_move_inventory_to_store(store, "coal")
+			elif index == 3:
+				_collect_belt_output(store)
+	building_storage[opened_building] = store
+
+func _move_inventory_to_store(store: Dictionary, item: String) -> void:
+	if inventory[item] <= 0:
+		_note("背包里没有%s。" % _display_name(item), 1.5)
+		return
+	inventory[item] -= 1
+	store[item] += 1
+	_note("已放入 1 %s。" % _display_name(item), 1.2)
+
+func _collect_furnace_output(store: Dictionary) -> void:
+	var total: int = int(store.iron_plate) + int(store.copper_plate)
+	if total <= 0:
+		_note("石炉还没有可取出的金属板。", 1.5)
+		return
+	inventory.iron_plate += store.iron_plate
+	inventory.copper_plate += store.copper_plate
+	store.iron_plate = 0
+	store.copper_plate = 0
+	_note("已取出 %d 块冶炼成品。" % total, 1.5)
+
+func _collect_belt_output(store: Dictionary) -> void:
+	var total: int = int(store.iron_ore) + int(store.copper_ore) + int(store.coal)
+	if total <= 0:
+		_note("传送带上没有货物。", 1.5)
+		return
+	for item in ["iron_ore", "copper_ore", "coal"]:
+		inventory[item] += store[item]
+		store[item] = 0
+	_note("已从传送带取回 %d 件货物。" % total, 1.5)
 
 func _note(text: String, duration: float) -> void:
 	message = text
@@ -262,6 +385,7 @@ func _draw() -> void:
 	_draw_header(font)
 	_draw_world(font)
 	_draw_footer(font)
+	_draw_building_panel(font)
 	if won:
 		draw_rect(Rect2(160, 270, 704, 142), Color(0.03, 0.07, 0.10, 0.94), true)
 		draw_rect(Rect2(160, 270, 704, 142), Color("#78ddb4"), false, 2.0)
@@ -328,12 +452,58 @@ func _draw_building(rect: Rect2, kind: String) -> void:
 			draw_rect(rect.grow(-4), color.darkened(0.45), true)
 			draw_circle(rect.get_center(), 9, color)
 			draw_circle(rect.get_center(), 4, Color("#f4e8ff"))
+	if opened_building == Vector2i(roundi((rect.position.x - ORIGIN.x) / TILE), roundi((rect.position.y - ORIGIN.y) / TILE)):
+		draw_rect(rect.grow(-2), Color("#fff1a8"), false, 2.0)
+
+func _draw_building_panel(font: Font) -> void:
+	if not _panel_is_open():
+		return
+	var kind: String = buildings[opened_building]
+	var store: Dictionary = building_storage[opened_building]
+	draw_rect(PANEL_RECT, Color(0.025, 0.065, 0.10, 0.97), true)
+	draw_rect(PANEL_RECT, BUILDING_COLORS[kind].lightened(0.18), false, 2.0)
+	draw_string(font, Vector2(696, 178), _building_name(kind), HORIZONTAL_ALIGNMENT_LEFT, -1, 23, Color("#e9f7ff"))
+	draw_string(font, Vector2(970, 177), "×", HORIZONTAL_ALIGNMENT_CENTER, 18, 23, Color("#d9eef8"))
+	draw_string(font, Vector2(696, 210), "点击其他已建设施可切换面板", HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color("#85a7ba"))
+	match kind:
+		"drill":
+			draw_string(font, Vector2(696, 242), "采集目标：%s" % _display_name(store.resource), HORIZONTAL_ALIGNMENT_LEFT, -1, 16, Color("#c8e7f2"))
+			draw_string(font, Vector2(696, 268), "内部缓存：%d / 20" % store.output, HORIZONTAL_ALIGNMENT_LEFT, -1, 16, Color("#f2d49a"))
+			_draw_panel_button(font, 0, "取出全部到背包")
+			draw_string(font, Vector2(696, 382), "采矿机每 1.25 秒开采 1 份矿石。", HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color("#a9c6d6"))
+			_draw_panel_button(font, 4, "关闭面板", Color("#3d5363"))
+		"furnace":
+			draw_string(font, Vector2(696, 242), "输入：铁矿 %d  ·  铜矿 %d  ·  煤炭 %d" % [store.iron_ore, store.copper_ore, store.coal], HORIZONTAL_ALIGNMENT_LEFT, -1, 15, Color("#c8e7f2"))
+			draw_string(font, Vector2(696, 268), "输出：铁板 %d  ·  铜板 %d" % [store.iron_plate, store.copper_plate], HORIZONTAL_ALIGNMENT_LEFT, -1, 15, Color("#f2d49a"))
+			_draw_panel_button(font, 0, "放入 1 铁矿")
+			_draw_panel_button(font, 1, "放入 1 铜矿")
+			_draw_panel_button(font, 2, "放入 1 煤炭")
+			_draw_panel_button(font, 3, "取出全部金属板", Color("#765d35"))
+			_draw_panel_button(font, 4, "关闭面板", Color("#3d5363"))
+		"belt":
+			draw_string(font, Vector2(696, 242), "货物缓存：铁矿 %d  ·  铜矿 %d  ·  煤炭 %d" % [store.iron_ore, store.copper_ore, store.coal], HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color("#c8e7f2"))
+			draw_string(font, Vector2(696, 268), "传送带演示物流缓存与移动特效。", HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color("#a9c6d6"))
+			_draw_panel_button(font, 0, "放入 1 铁矿")
+			_draw_panel_button(font, 1, "放入 1 铜矿")
+			_draw_panel_button(font, 2, "放入 1 煤炭")
+			_draw_panel_button(font, 3, "取出全部货物", Color("#765d35"))
+			_draw_panel_button(font, 4, "关闭面板", Color("#3d5363"))
+		"lab":
+			draw_string(font, Vector2(696, 242), "研究站已经完成首个自动化里程碑。", HORIZONTAL_ALIGNMENT_LEFT, -1, 16, Color("#c8e7f2"))
+			draw_string(font, Vector2(696, 272), "下一步可以扩展配方、传送带连接与电网。", HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color("#a9c6d6"))
+			_draw_panel_button(font, 4, "关闭面板", Color("#3d5363"))
+
+func _draw_panel_button(font: Font, index: int, label: String, tint := Color("#355d70")) -> void:
+	var rect := _panel_button_rect(index)
+	draw_rect(rect, tint, true)
+	draw_rect(rect, tint.lightened(0.3), false, 1.0)
+	draw_string(font, Vector2(rect.position.x + 12, rect.position.y + 24), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 16, Color("#f1fbff"))
 
 func _draw_footer(font: Font) -> void:
 	draw_rect(Rect2(0, 680, 1024, 40), Color("#0d1b29"), true)
 	var selector := "[1]采矿机  [2]石炉  [3]传送带  [4]研究站"
 	draw_string(font, Vector2(24, 705), selector, HORIZONTAL_ALIGNMENT_LEFT, -1, 15, Color("#c8dce8"))
-	draw_string(font, Vector2(506, 705), "当前：%s  ·  鼠标左键建造  ·  E 挖矿  ·  G 合成齿轮" % _building_name(selected), HORIZONTAL_ALIGNMENT_LEFT, -1, 15, Color("#f4d68e"))
+	draw_string(font, Vector2(506, 705), "当前：%s  ·  点击空地建造 / 点击设施开面板  ·  E 挖矿" % _building_name(selected), HORIZONTAL_ALIGNMENT_LEFT, -1, 15, Color("#f4d68e"))
 	if message_timer > 0.0:
 		draw_rect(Rect2(220, 638, 584, 30), Color(0.03, 0.08, 0.12, 0.94), true)
 		draw_string(font, Vector2(238, 660), message, HORIZONTAL_ALIGNMENT_CENTER, 548, 15, Color("#d5f4ff"))
